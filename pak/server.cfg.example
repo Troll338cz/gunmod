@@ -1,0 +1,21 @@
+allow_spectators 1
+mp_adminpass ChangeMe123456
+sv_maxspeed 320
+sv_cheats 0
+sv_enttools_enable 0
+host_mapdesign_fatal 0
+mp_allowmonsters 1
+
+mp_selfgauss 0
+mp_tolchock 1
+mp_toilet ^5Dust
+mp_toilet_speed 400
+mp_toilet_turn 0
+mp_santahat 0
+
+mp_allow_weapon weapon_gravgun 1
+mp_allow_weapon weapon_knife 1 
+mp_allow_weapon weapon_sniperrifle 1
+
+// load opfor NPC data
+exec skillopfor.cfg
