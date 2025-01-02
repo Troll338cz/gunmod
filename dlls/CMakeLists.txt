@@ -61,6 +61,7 @@ set (SVDLL_SOURCES
 	effects.cpp
 	egon.cpp
 	explode.cpp
+	enttools.cpp
 	flyingmonster.cpp
 	func_break.cpp
 	func_tank.cpp
@@ -75,8 +76,8 @@ set (SVDLL_SOURCES
 	gman.cpp
 	h_ai.cpp
 	h_battery.cpp
-	h_cine.cpp
 	h_cycler.cpp
+	h_cine.cpp
 	h_export.cpp
 	handgrenade.cpp
 	hassassin.cpp
@@ -100,7 +101,6 @@ set (SVDLL_SOURCES
 	multiplay_gamerules.cpp
 	nihilanth.cpp
 	nodes.cpp
-	observer.cpp
 	osprey.cpp
 	pathcorner.cpp
 	plane.cpp
@@ -121,13 +121,14 @@ set (SVDLL_SOURCES
 	sound.cpp
 	soundent.cpp
 	spectator.cpp
+	sniperrifle.cpp
 	squadmonster.cpp
 	squeakgrenade.cpp
 	subs.cpp
 	talkmonster.cpp
 	teamplay_gamerules.cpp
-	tempmonster.cpp
 	tentacle.cpp
+	tempmonster.cpp
 	triggers.cpp
 	tripmine.cpp
 	turret.cpp
@@ -136,16 +137,69 @@ set (SVDLL_SOURCES
 	world.cpp
 	xen.cpp
 	zombie.cpp
+	prop.cpp
+	gravgun.cpp
+	ar2.cpp
+	big_cock.cpp
+	unpredictedweapon.cpp
+	coop.cpp
+	gateofbabylon.cpp
+	gravgunmod.cpp
+	shock.cpp
+	shockrifle.cpp
+	displacer.cpp
+	m249.cpp
+	admin.cpp
+	gunmod.cpp
+	BMOD_flyingcrowbar.cpp
+	BMOD_player.cpp
+	bottle.cpp
+	knife.cpp
+	grapple.cpp
+	sporegrenade.cpp
+	sporelauncher.cpp
+	spore_ammo.cpp
+	hideandseek_gamerules.cpp
+	dust.cpp
+	portalgun.cpp
+	portal_creator.cpp
+	prop_portal.cpp
+	santahat.cpp
+	xtree.cpp
+	gearbox/blkop_apache.cpp
+	gearbox/blkop_osprey.cpp
+	gearbox/cleansuit_scientist.cpp
+	gearbox/drillsergeant.cpp
+	gearbox/gearbox_effects.cpp
+	gearbox/gearbox_triggers.cpp
+	gearbox/gearbox_utils.cpp
+	gearbox/generic_items.cpp
+	gearbox/geneworm.cpp
+	gearbox/gonome.cpp
+	gearbox/houndeye_dead.cpp
+	gearbox/islave_dead.cpp
+	gearbox/loader.cpp
+	gearbox/massn.cpp
+	gearbox/nuclearbomb.cpp
+	gearbox/op4mortar.cpp
+	gearbox/otis.cpp
+	gearbox/penguin.cpp
+	gearbox/pitdrone.cpp
+	gearbox/pitworm.cpp
+	gearbox/recruit.cpp
+	gearbox/ropes.cpp
+	gearbox/shockroach.cpp
+	gearbox/skeleton.cpp
+	gearbox/strooper.cpp
+	gearbox/voltigore.cpp
+	gearbox/zombie_barney.cpp
+	gearbox/zombie_soldier.cpp
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_math.c
 	../pm_shared/pm_shared.c
-	coop.cpp
-	gravgunmod.cpp
-	enttools.cpp
-	prop.cpp
 )
 	
-include_directories (. wpn_shared ../common ../engine ../pm_shared ../game_shared ../public)
+include_directories (. ./gearbox wpn_shared ../common ../engine ../pm_shared ../game_shared ../public)
 
 if(USE_VOICEMGR)
 	set(SVDLL_SOURCES
@@ -157,8 +211,8 @@ endif()
 
 add_library (${SVDLL_LIBRARY} SHARED ${SVDLL_SOURCES})
 
-set_target_properties (${SVDLL_LIBRARY} PROPERTIES
-	POSITION_INDEPENDENT_CODE 1)
+#set_target_properties (${SVDLL_LIBRARY} PROPERTIES
+#	POSITION_INDEPENDENT_CODE 1)
 
 if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(SVDLL_NAME "${SERVER_LIBRARY_NAME}")
@@ -166,9 +220,9 @@ if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 		set(SVDLL_NAME "${SERVER_LIBRARY_NAME}64")
 	endif()
 
-	set_target_properties(${SVDLL_LIBRARY} PROPERTIES
-		OUTPUT_NAME ${SVDLL_NAME}
-		PREFIX "")
+#	set_target_properties(${SVDLL_LIBRARY} PROPERTIES
+#		OUTPUT_NAME ${SVDLL_NAME}
+#		PREFIX "")
 endif()
 
 install( TARGETS ${SVDLL_LIBRARY}
