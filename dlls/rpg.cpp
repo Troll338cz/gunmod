@@ -29,12 +29,12 @@ enum rpg_e
 	RPG_FIDGET,
 	RPG_RELOAD,		// to reload
 	RPG_FIRE2,		// to empty
-	RPG_HOLSTER1,	// loaded
+	RPG_HOLSTER1,		// loaded
 	RPG_DRAW1,		// loaded
-	RPG_HOLSTER2,	// unloaded
-	RPG_DRAW_UL,	// unloaded
-	RPG_IDLE_UL,	// unloaded idle
-	RPG_FIDGET_UL	// unloaded fidget
+	RPG_HOLSTER2,		// unloaded
+	RPG_DRAW_UL,		// unloaded
+	RPG_IDLE_UL,		// unloaded idle
+	RPG_FIDGET_UL		// unloaded fidget
 };
 
 LINK_ENTITY_TO_CLASS( weapon_rpg, CRpg )
@@ -136,6 +136,7 @@ void CRpgRocket::Spawn( void )
 
 	pev->angles.x -= 30;
 	UTIL_MakeVectors( pev->angles );
+
 	pev->angles.x = -( pev->angles.x + 30 );
 
 	pev->velocity = gpGlobals->v_forward * 250;

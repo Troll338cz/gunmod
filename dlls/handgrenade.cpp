@@ -78,6 +78,7 @@ int CHandGrenade::GetItemInfo( ItemInfo *p )
 BOOL CHandGrenade::Deploy()
 {
 	m_flReleaseThrow = -1;
+	m_bPrimaryThrow = FALSE;
 	return DefaultDeploy( "models/v_grenade.mdl", "models/p_grenade.mdl", HANDGRENADE_DRAW, "crowbar" );
 }
 
@@ -115,9 +116,21 @@ void CHandGrenade::PrimaryAttack()
 {
 	if( !m_flStartThrow && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0 )
 	{
+		m_bPrimaryThrow = TRUE;
 		m_flStartThrow = gpGlobals->time;
 		m_flReleaseThrow = 0;
+		SendWeaponAnim( HANDGRENADE_PINPULL );
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5;
+	}
+}
 
+void CHandGrenade::SecondaryAttack()
+{
+	if( !m_flStartThrow && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0 )
+	{
+		m_bPrimaryThrow = FALSE;
+		m_flStartThrow = gpGlobals->time;
+		m_flReleaseThrow = 0;
 		SendWeaponAnim( HANDGRENADE_PINPULL );
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5;
 	}
@@ -140,7 +153,13 @@ void CHandGrenade::WeaponIdle( void )
 		else
 			angThrow.x = -10 + angThrow.x * ( ( 90 + 10 ) / 90.0 );
 
-		float flVel = ( 90 - angThrow.x ) * 4;
+		// Troll: allow nade to be tossed
+		float flVel = 0.0;
+		if( m_bPrimaryThrow )
+			flVel = ( 90 - angThrow.x ) * 5; // 4
+		else
+			flVel = ( 90 - angThrow.x ) * 2.5; // 2
+
 		if( flVel > 500 )
 			flVel = 500;
 
@@ -175,7 +194,7 @@ void CHandGrenade::WeaponIdle( void )
 
 		m_flReleaseThrow = 0;
 		m_flStartThrow = 0;
-		m_flNextPrimaryAttack = GetNextAttackDelay( 0.5 );
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = GetNextAttackDelay( 0.5 );
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5;
 
 		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;

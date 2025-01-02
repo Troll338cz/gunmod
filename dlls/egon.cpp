@@ -253,7 +253,11 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 	if( tr.fAllSolid )
 		return;
 
-	UTIL_DecalTrace(&tr, DECAL_SMALLSCORCH2);
+	if( NextScorchMark <= gpGlobals->time )
+	{
+		UTIL_DecalTrace(&tr, DECAL_SMALLSCORCH2);
+		NextScorchMark = gpGlobals->time + 0.05;	
+	}
 
 	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
 		WRITE_BYTE(TE_DLIGHT);

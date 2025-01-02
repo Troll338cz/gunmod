@@ -42,6 +42,15 @@ enum squeak_e
 	SQUEAK_THROW
 };
 
+enum penguin_e {
+	PENGUIN_IDLE1 = 0,
+	PENGUIN_FIDGETFIT,
+	PENGUIN_FIDGETNIP,
+	PENGUIN_DOWN,
+	PENGUIN_UP,
+	PENGUIN_THROW
+};
+
 #ifndef CLIENT_DLL
 class CSqueakGrenade : public CGrenade
 {
@@ -441,9 +450,16 @@ void CSqueak::Precache( void )
 	PRECACHE_MODEL( "models/w_sqknest.mdl" );
 	PRECACHE_MODEL( "models/v_squeak.mdl" );
 	PRECACHE_MODEL( "models/p_squeak.mdl" );
+
+	PRECACHE_MODEL("models/w_penguinnest.mdl");
+	PRECACHE_MODEL("models/v_penguin.mdl");
+	PRECACHE_MODEL("models/p_penguin.mdl");
+
 	PRECACHE_SOUND( "squeek/sqk_hunt2.wav" );
 	PRECACHE_SOUND( "squeek/sqk_hunt3.wav" );
+
 	UTIL_PrecacheOther( "monster_snark" );
+	UTIL_PrecacheOther( "monster_penguin" );
 
 	m_usSnarkFire = PRECACHE_EVENT( 1, "events/snarkfire.sc" );
 }
@@ -477,7 +493,12 @@ BOOL CSqueak::Deploy()
 
 	m_pPlayer->m_iWeaponVolume = QUIET_GUN_VOLUME;
 
-	return DefaultDeploy( "models/v_squeak.mdl", "models/p_squeak.mdl", SQUEAK_UP, "squeak" );
+	UTIL_ShowMessage("ALT FIRE=Switch to penguins", m_pPlayer);
+
+	if( FireMode == 0 )
+		return DefaultDeploy( "models/v_squeak.mdl", "models/p_squeak.mdl", SQUEAK_UP, "squeak" );
+	else
+		return DefaultDeploy( "models/v_penguin.mdl", "models/p_penguin.mdl", PENGUIN_UP, "squeak" );
 }
 
 void CSqueak::Holster( int skiplocal /* = 0 */ )
@@ -491,7 +512,11 @@ void CSqueak::Holster( int skiplocal /* = 0 */ )
 		return;
 	}
 
-	SendWeaponAnim( SQUEAK_DOWN );
+	if( FireMode == 0 )
+		SendWeaponAnim( SQUEAK_DOWN );
+	else
+		SendWeaponAnim( PENGUIN_DOWN );
+
 	EMIT_SOUND( ENT( m_pPlayer->pev ), CHAN_WEAPON, "common/null.wav", 1.0, ATTN_NORM );
 }
 
@@ -527,7 +552,8 @@ void CSqueak::PrimaryAttack()
 			// player "shoot" animation
 			m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 #ifndef CLIENT_DLL
-			CBaseEntity *pSqueak = CBaseEntity::Create( "monster_snark", tr.vecEndPos, m_pPlayer->pev->v_angle, m_pPlayer->edict() );
+			CBaseEntity *pSqueak;
+			pSqueak = CBaseEntity::Create( FireMode ? "monster_penguin" : "monster_snark", tr.vecEndPos, m_pPlayer->pev->v_angle, m_pPlayer->edict() );
 			pSqueak->pev->velocity = gpGlobals->v_forward * 200 + m_pPlayer->pev->velocity;
 #endif
 			// play hunt sound
@@ -552,7 +578,18 @@ void CSqueak::PrimaryAttack()
 
 void CSqueak::SecondaryAttack( void )
 {
+	if( FireMode )
+		FireMode = FALSE;
+	else
+		FireMode = TRUE;
 
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = GetNextAttackDelay( 0.5 );
+	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0;
+
+	if( FireMode == 0 )
+		DefaultDeploy( "models/v_squeak.mdl", "models/p_squeak.mdl", SQUEAK_UP, "squeak" );
+	if( FireMode == 1 )
+		DefaultDeploy("models/v_penguin.mdl", "models/p_penguin.mdl", PENGUIN_UP, "squeak" );
 }
 
 void CSqueak::WeaponIdle( void )
@@ -569,8 +606,11 @@ void CSqueak::WeaponIdle( void )
 			RetireWeapon();
 			return;
 		}
+		if( FireMode == 0 )
+			SendWeaponAnim( SQUEAK_UP );
+		else
+			SendWeaponAnim( PENGUIN_UP );
 
-		SendWeaponAnim( SQUEAK_UP );
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
 		return;
 	}
@@ -579,17 +619,29 @@ void CSqueak::WeaponIdle( void )
 	float flRand = UTIL_SharedRandomFloat( m_pPlayer->random_seed, 0, 1 );
 	if( flRand <= 0.75 )
 	{
-		iAnim = SQUEAK_IDLE1;
+		if( FireMode == 0 )
+			iAnim = SQUEAK_IDLE1;
+		else
+			iAnim = PENGUIN_IDLE1;
+
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 30.0 / 16 * (2);
 	}
 	else if( flRand <= 0.875 )
 	{
-		iAnim = SQUEAK_FIDGETFIT;
+		if( FireMode == 0 )
+			iAnim = SQUEAK_FIDGETFIT;
+		else
+			iAnim = PENGUIN_FIDGETFIT;
+
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 70.0 / 16.0;
 	}
 	else
 	{
-		iAnim = SQUEAK_FIDGETNIP;
+		if( FireMode == 0 )
+			iAnim = SQUEAK_FIDGETNIP;
+		else
+			iAnim = PENGUIN_FIDGETNIP;
+
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 80.0 / 16.0;
 	}
 	SendWeaponAnim( iAnim );

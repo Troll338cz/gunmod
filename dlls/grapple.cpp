@@ -268,9 +268,10 @@ int CBarnacleGrappleTip::CheckTarget( CBaseEntity* pTarget )
 		pTexture = TRACE_TEXTURE(ENT(0), rgfl1, rgfl2);
 
 	bool bIsFixed = FALSE;
+// Troll: dont flood...
+//	ALERT(at_console, "texturename: %s\n", pTexture);
 
-	ALERT(at_console, "texturename: %s\n", pTexture);
-	if( pTexture && ((strnicmp( pTexture, "xeno_grapple", 12 ) == 0) || (strcmp( pTexture, "-0out_rk5") == 0)) )
+	if( pTexture && ((strnicmp( pTexture, "xeno_grapple", 12 ) == 0) || (strcmp( pTexture, "-0out_rk5") == 0) || (strnicmp( pTexture, "{ladder", 7 ) == 0) || (strnicmp( pTexture, "{fence", 7 ) == 0) ) )
 	{
 		bIsFixed = TRUE;
 	}
@@ -475,11 +476,12 @@ void CBarnacleGrapple::WeaponIdle( void )
 
 void CBarnacleGrapple::PrimaryAttack( void )
 {
-	if( m_bMissed )
-	{
-		m_flTimeWeaponIdle = gpGlobals->time + 0.1;
-		return;
-	}
+        if( m_bMissed )
+        {
+                m_flTimeWeaponIdle = gpGlobals->time + 0.1;
+                m_flNextPrimaryAttack = gpGlobals->time + 0.3;
+                return;
+        }
 
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 

@@ -22,6 +22,7 @@
 #include "cbase.h"
 #include "monsters.h"
 #include "saverestore.h"
+#include "gunmod.h" // Troll: bad classnames
 
 // Monstermaker spawnflags
 #define	SF_MONSTERMAKER_START_ON	1 // start active ( if has targetname )
@@ -187,6 +188,14 @@ void CMonsterMaker::MakeMonster( void )
 	if( count )
 	{
 		// don't build a stack of monsters!
+		return;
+	}
+
+	if( !GM_IsAllowedClassname( STRING(m_iszMonsterClassname) ) )
+	{
+		ALERT( at_console, "Banned Ent in MonsterMaker!\n" );
+		m_fActive = FALSE;
+		SetThink( &CBaseEntity::SUB_Remove );
 		return;
 	}
 

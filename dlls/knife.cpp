@@ -195,8 +195,12 @@ void CKnife::SecondaryAttack( void )
 					EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/knife_hit_flesh2.wav", 1, ATTN_NORM); break;
 				}
 				m_pPlayer->m_iWeaponVolume = KNIFE_BODYHIT_VOLUME;
+
 				if (!pEntity->IsAlive())
+				{
+					m_flNextPrimaryAttack = GetNextAttackDelay(0.25);
 					return;
+				}
 				else
 					flVol = 0.1;
 
@@ -395,6 +399,8 @@ int CKnife::Swing(int fFirst)
 
 			// delay the decal a bit
 			m_trHit = tr;
+			// Troll: spark
+			//UTIL_Sparks(tr.vecEndPos);
 		}
 
 		m_pPlayer->m_iWeaponVolume = flVol * KNIFE_WALLHIT_VOLUME;

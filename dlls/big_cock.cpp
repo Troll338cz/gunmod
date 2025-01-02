@@ -98,7 +98,7 @@ int CBig_Cock::GetItemInfo(ItemInfo *p)
 	p->iMaxAmmo2 = -1;
 	p->iMaxClip = 14;
 	p->iSlot = 1;
-	p->iPosition = 3;
+	p->iPosition = 2;
 	p->iFlags = 0;
 	p->iId = m_iId = WEAPON_BIG_COCK;
 	p->iWeight = BIG_COCK_WEIGHT;
@@ -284,13 +284,6 @@ void CBig_Cock::WeaponIdle(void)
 		SendWeaponAnim( iAnim );
 	}
 }
-
-
-
-
-
-
-
 
 class CGlockAmmo : public CBasePlayerAmmo
 {

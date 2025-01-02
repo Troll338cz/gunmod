@@ -593,13 +593,25 @@ CGMGrenade *CGMGrenade::ShootTimed( entvars_t *pevOwner, Vector vecStart, Vector
 {
 	CGMGrenade *pGrenade = GetClassPtr( (CGMGrenade *)NULL );
 	pGrenade->Spawn();
-	PRECACHE_MODEL( "sprites/glow02.spr" );
+	//PRECACHE_MODEL( "sprites/glow02.spr" );
 
 	UTIL_SetOrigin( pGrenade->pev, vecStart );
 	pGrenade->pev->velocity = vecVelocity;
 	//pGrenade->pev->avelocity = vecAngVel;
 	pGrenade->pev->angles = UTIL_VecToAngles( pGrenade->pev->velocity );
 	int m_iTrail = PRECACHE_MODEL( "sprites/smoke.spr" );
+
+	MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
+		WRITE_BYTE( TE_BEAMFOLLOW );
+		WRITE_SHORT( pGrenade->entindex() );	// entity
+		WRITE_SHORT( m_iTrail );		// model
+		WRITE_BYTE( 5 ); 			// life
+		WRITE_BYTE( 1 );  			// width
+		WRITE_BYTE( 224 );   			// r, g, b
+		WRITE_BYTE( 224 );   			// r, g, b
+		WRITE_BYTE( 255 );   			// r, g, b
+		WRITE_BYTE( 180 );			// brightness
+	MESSAGE_END();
 
 /*
 	MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );

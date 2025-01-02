@@ -288,7 +288,10 @@ int CCrowbar::Swing( int fFirst )
 				}
 				m_pPlayer->m_iWeaponVolume = CROWBAR_BODYHIT_VOLUME;
 				if( !pEntity->IsAlive() )
+				{
+					m_flNextPrimaryAttack = GetNextAttackDelay(0.25);
 					return TRUE;
+				}
 				else
 					flVol = 0.1;
 
@@ -326,7 +329,8 @@ int CCrowbar::Swing( int fFirst )
 			m_trHit = tr;
 
 			UTIL_Sparks(tr.vecEndPos);
-			UTIL_ScreenShake( tr.vecEndPos, 15.0, 20.0, 1, 50 );
+			// Troll: Dont make an earthquake with the crowbar
+			//UTIL_ScreenShake( tr.vecEndPos, 15.0, 20.0, 1, 50 );
 		}
 
 		m_pPlayer->m_iWeaponVolume = (int)( flVol * CROWBAR_WALLHIT_VOLUME );
@@ -342,6 +346,7 @@ int CCrowbar::Swing( int fFirst )
 	return fDidHit;
 }
 
+// BMOD Begin - Flying Crowbar
 void CCrowbar::CreateThink()
 {
 		// Get the origin, direction, and fix the angle of the throw.
@@ -379,7 +384,6 @@ void CCrowbar::CreateThink()
 		SetThink( NULL );
 }
 
-// BMOD Begin - Flying Crowbar
 void CCrowbar::SecondaryAttack()
 {
 	// Don't throw underwater, and only throw if we were able to detatch 

@@ -322,7 +322,7 @@ void W_Precache( void )
 	// 9mm ammo box
 	UTIL_PrecacheOther( "ammo_9mmbox" );
 
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+
 	// python
 	UTIL_PrecacheOtherWeapon( "weapon_357" );
 	UTIL_PrecacheOther( "ammo_357" );
@@ -341,22 +341,25 @@ void W_Precache( void )
 
 	// egon
 	UTIL_PrecacheOtherWeapon( "weapon_egon" );
-#endif
+
 	// tripmine
 	UTIL_PrecacheOtherWeapon( "weapon_tripmine" );
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+
 	// satchel charge
 	UTIL_PrecacheOtherWeapon( "weapon_satchel" );
-#endif
+
 	// hand grenade
 	UTIL_PrecacheOtherWeapon("weapon_handgrenade");
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+
 	// squeak grenade
 	UTIL_PrecacheOtherWeapon( "weapon_snark" );
 
 	// hornetgun
 	UTIL_PrecacheOtherWeapon( "weapon_hornetgun" );
-#endif
+	// sniper
+	UTIL_PrecacheOtherWeapon( "weapon_sniperrifle" );
+        UTIL_PrecacheOther( "ammo_762" );
+
 	if ( mp_gunmod.value )
 	{
 		UTIL_PrecacheOtherWeapon( "weapon_gravgun" );
@@ -369,14 +372,15 @@ void W_Precache( void )
 		UTIL_PrecacheOtherWeapon( "weapon_grapple" );
 		UTIL_PrecacheOtherWeapon( "weapon_sporelauncher" );
 		UTIL_PrecacheOtherWeapon( "weapon_portalgun" );
+		UTIL_PrecacheOtherWeapon( "weapon_knife" );
 	}
 
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+
 	if ( g_pGameRules->IsDeathmatch() )
 	{
 		UTIL_PrecacheOther( "weaponbox" );// container for dropped deathmatch weapons
 	}
-#endif
+
 	g_sModelIndexFireball = PRECACHE_MODEL( "sprites/zerogxplode.spr" );// fireball
 	g_sModelIndexWExplosion = PRECACHE_MODEL( "sprites/WXplo1.spr" );// underwater fireball
 	g_sModelIndexSmoke = PRECACHE_MODEL( "sprites/steam1.spr" );// smoke
@@ -1300,13 +1304,13 @@ int CBasePlayerWeapon::ExtractAmmo( CBasePlayerWeapon *pWeapon )
 	{
 		// blindly call with m_iDefaultAmmo. It's either going to be a value or zero. If it is zero,
 		// we only get the ammo in the weapon's clip, which is what we want. 
-		iReturn = pWeapon->AddPrimaryAmmo( m_iDefaultAmmo, (char *)pszAmmo1(), iMaxClip(), iMaxAmmo1() );
+		iReturn |= pWeapon->AddPrimaryAmmo( m_iDefaultAmmo, (char *)pszAmmo1(), iMaxClip(), iMaxAmmo1() );
 		m_iDefaultAmmo = 0;
 	}
 
 	if( pszAmmo2() != NULL )
 	{
-		iReturn = pWeapon->AddSecondaryAmmo( 0, (char *)pszAmmo2(), iMaxAmmo2() );
+		iReturn |= pWeapon->AddSecondaryAmmo( 0, (char *)pszAmmo2(), iMaxAmmo2() );
 	}
 
 	return iReturn;

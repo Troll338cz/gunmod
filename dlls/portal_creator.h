@@ -9,7 +9,8 @@ public:
         static void Shoot(edict_t *pevOwner, const Vector angles, const Vector vecStart, const Vector vecVelocity, BOOL blue);
         void Touch(CBaseEntity *pOther);
         void EXPORT FlyThink();
-		void OpenError();
+	void OpenError();
+	static void ClosePortals(edict_t *pevOwner);
 
         virtual float TouchGravGun( CBaseEntity *attacker, int stage )
         {

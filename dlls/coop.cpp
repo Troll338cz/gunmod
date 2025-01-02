@@ -4,6 +4,7 @@
 #include "player.h"
 #include "coop_util.h"
 #include "gravgunmod.h"
+#include "gamerules.h"
 
 bool g_fPause;
 
@@ -224,7 +225,7 @@ static void COOP_CheckSaveSlots( void )
 
 	// check save slots (may be cleaned by newunit)
 	GET_GAME_DIR(path);
-	strcat( path, PATHSEP"save" );
+	strcat( path, PATHSEP "save" );
 	for( i = 0; i < ARRAYSIZE( g_CoopState.p.rgszSaveSlots ); i++ )
 	{
 		char fpath[256] = "";
@@ -233,7 +234,7 @@ static void COOP_CheckSaveSlots( void )
 		if( !g_CoopState.p.rgszSaveSlots[i] )
 			continue;
 
-		snprintf( fpath, 255, "%s"PATHSEP"%s.coop", path, g_CoopState.p.rgszSaveSlots[i] );
+		snprintf( fpath, 255, "%s" PATHSEP "%s.coop", path, g_CoopState.p.rgszSaveSlots[i] );
 		if( f = fopen( fpath, "rb" ) )
 			fclose( f );
 		else
@@ -256,7 +257,7 @@ void COOP_ClearSaves( void )
 	const char *pszOldMap = NULL;
 
 	GET_GAME_DIR(path);
-	strcat( path, PATHSEP"save" );
+	strcat( path, PATHSEP "save" );
 
 	if( g_CoopState.landmarkTransition.szSourceMap[0] )
 		pszOldMap = g_CoopState.landmarkTransition.szSourceMap;
@@ -280,7 +281,7 @@ void COOP_ClearSaves( void )
 			if( pszOldMap && !strncmp( entry->d_name + 6, pszOldMap, strlen( pszOldMap ) ) )
 				continue;
 
-			snprintf( fpath, 255, "%s"PATHSEP"%s", path, entry->d_name );
+			snprintf( fpath, 255, "%s" PATHSEP "%s", path, entry->d_name );
 			ALERT( at_console, "Removing %s\n", fpath );
 			remove( fpath );
 		}
@@ -475,6 +476,10 @@ Set noclip and invisibility
 */
 void UTIL_BecomeSpectator( CBasePlayer *pPlayer )
 {
+	edict_t *pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot( pPlayer );
+	pPlayer->StartObserver( pPlayer->pev->origin, VARS( pentSpawnSpot )->angles );
+	pPlayer->m_bSentMsg = FALSE;
+/*
 	//pPlayer->m_bDoneFirstSpawn = true;
 	pPlayer->pev->takedamage = DAMAGE_NO;
 	pPlayer->pev->flags |= FL_SPECTATOR;
@@ -488,6 +493,7 @@ void UTIL_BecomeSpectator( CBasePlayer *pPlayer )
 	//pPlayer->StopObserver();
 	//while( !pPlayer->IsObserver() )
 		//pPlayer->StartObserver(pPlayer->pev->origin, pPlayer->pev->angles);
+*/
 	return;
 }
 

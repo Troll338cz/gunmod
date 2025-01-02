@@ -147,13 +147,13 @@ void CGunmodHideAndSeek::Think( void )
 			UTIL_ScreenFade(firstseeker, Vector(0, 255 ,0) , 0.1, 0.1, 125, FFADE_IN);
 			UTIL_SpawnPlayer(firstseeker);
 			flRoundTime = gpGlobals->time + hideandseek_roundtime.value;
-			GGM_SayText("(SERVER): seeker was spawned");
+			GGM_SayText("^3(SERVER)^7: seeker was spawned");
 			m_brtimer = FALSE;
 		}
 		else if( gpGlobals->time >= flTimerUpdate )
 		{
 			char text[1024];
-			sprintf(text, "(SERVER): %d seconds left before seeker spawn", (int)(flbrtime-gpGlobals->time));
+			sprintf(text, "^3(SERVER)^7: %d seconds left before seeker spawn", (int)(flbrtime-gpGlobals->time));
 			GGM_SayText(text);
 			flTimerUpdate = gpGlobals->time + 10;
 
@@ -163,18 +163,18 @@ void CGunmodHideAndSeek::Think( void )
 	{
 		if( CountTeam("hiding") == 0 )
 		{
-			GGM_SayText("(SERVER): ^2winners: seekers");
+			GGM_SayText("^3(SERVER)^7: ^2winners: seekers");
 			RoundEnd();
 		}
 		else if( CountTeam("seekers") == 0)
 		{
-			GGM_SayText("(SERVER): ^2 winners: hiding");
+			GGM_SayText("^3(SERVER)^7: ^2winners: hiding");
 			RoundEnd();
 		}
 
 		if( gpGlobals->time >= flRoundTime )
 		{
-			GGM_SayText("(SERVER): ^2 winners: hiding");
+			GGM_SayText("^3(SERVER)^7: ^2 winners: hiding");
 			RoundStart();
 		}
 		else if( gpGlobals->time >= flTimerUpdate )
@@ -182,7 +182,7 @@ void CGunmodHideAndSeek::Think( void )
 			char text[1024];
 			int min = (int)((flRoundTime - gpGlobals->time)/60);
 			int sec = (int)(flRoundTime - gpGlobals->time - 60*min);
-			sprintf(text, "(SERVER): round time left %d:%d", min, sec);
+			sprintf(text, "^3(SERVER)^7: round time left %d:%d", min, sec);
 			flTimerUpdate = gpGlobals->time + 30;
 			GGM_SayText( text );
 		}
@@ -296,7 +296,7 @@ void CGunmodHideAndSeek::InitHUD( CBasePlayer *pPlayer )
 	{
 		m_brtimer = FALSE;
 		m_roundstarted = FALSE;
-		sprintf( text, "(SERVER): need %d players or more to start round\n", (int)hideandseek_minplayers.value );
+		sprintf( text, "^3(SERVER)^7: need %d players or more to start round\n", (int)hideandseek_minplayers.value );
 		UTIL_SayText(text, pPlayer);
 	}
 
@@ -304,7 +304,6 @@ void CGunmodHideAndSeek::InitHUD( CBasePlayer *pPlayer )
 
 	// update this player with all the other players team info
 	// loop through all active players and send their team info to the new client
-
 	for( i = 1; i <= gpGlobals->maxClients; i++ )
 	{
 		CBaseEntity *plr = UTIL_PlayerByIndex( i );
@@ -324,13 +323,9 @@ void CGunmodHideAndSeek::ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTe
 	int clientIndex = pPlayer->entindex();
 
 	if( !bGib )
-	{
 		damageFlags |= DMG_NEVERGIB;
-	}
 	else
-	{
 		damageFlags |= DMG_ALWAYSGIB;
-	}
 
 	if( bKill )
 	{
@@ -535,7 +530,7 @@ void CGunmodHideAndSeek::DistributeTeams( void )
 			if( seeker_num == num )
 			{
 				char text[1024];
-				sprintf(text, "(SERVER) %s ^7- new seeker", GGM_PlayerName(plr));
+				sprintf(text, "^3(SERVER)^7 %s ^7- new seeker", GGM_PlayerName(plr));
 				ChangePlayerTeam(plr, "seekers", FALSE, FALSE);
 				firstseeker = plr;
 				GGM_SayText(text);
@@ -618,7 +613,7 @@ void CGunmodHideAndSeek::RoundEnd()
 	if( countplayers() < hideandseek_minplayers.value )
 	{
 		char text[1024];
-		sprintf( text, "(SERVER): need %d players or more to start round\n", (int)hideandseek_minplayers.value );
+		sprintf( text, "^3(SERVER)^7: need %d players or more to start round\n", (int)hideandseek_minplayers.value );
 		GGM_SayText(text);
 	}
 

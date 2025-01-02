@@ -31,8 +31,9 @@ float GetSkillCvar( const char *pName )
 	char szBuffer[64];
 
 	sprintf( szBuffer, "%s%d",pName, gSkillData.iSkillLevel );
-
+	
 	flValue = CVAR_GET_FLOAT( szBuffer );
+	//printf("%s %f\n", szBuffer, flValue);
 
 	if( flValue <= 0 )
 	{

@@ -12,8 +12,6 @@
 #include "shake.h"
 #include "xtree.h"
 
-extern int gmsgSayText;
-
 LINK_ENTITY_TO_CLASS(xtree, CXtree);
 
 void CXtree::Precache( void )

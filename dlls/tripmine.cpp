@@ -41,6 +41,7 @@ enum tripmine_e
 #ifndef CLIENT_DLL
 class CTripmineGrenade : public CGrenade
 {
+private:
 	void Spawn( void );
 	void Precache( void );
 	void UpdateOnRemove();
@@ -57,7 +58,6 @@ class CTripmineGrenade : public CGrenade
 	void EXPORT BeamBreakThink( void );
 	void EXPORT DelayDeathThink( void );
 	void Killed( entvars_t *pevAttacker, int iGib );
-
 	void MakeBeam( void );
 	void KillBeam( void );
 
@@ -68,9 +68,11 @@ class CTripmineGrenade : public CGrenade
 
 	EHANDLE m_hOwner;
 	CBeam *m_pBeam;
+	CSprite *m_pBeamSpr;
 	Vector m_posOwner;
 	Vector m_angleOwner;
-	edict_t *m_pRealOwner;// tracelines don't hit PEV->OWNER, which means a player couldn't detonate his own trip mine, so we store the owner here.
+public:				// Troll: Public here for cleanup code, pev->owner is empty due to comment bellow.
+	edict_t *m_pRealOwner;	// tracelines don't hit PEV->OWNER, which means a player couldn't detonate his own trip mine, so we store the owner here.
 };
 
 LINK_ENTITY_TO_CLASS( monster_tripmine, CTripmineGrenade )
@@ -86,6 +88,7 @@ TYPEDESCRIPTION	CTripmineGrenade::m_SaveData[] =
 	DEFINE_FIELD( CTripmineGrenade, m_posOwner, FIELD_POSITION_VECTOR ),
 	DEFINE_FIELD( CTripmineGrenade, m_angleOwner, FIELD_VECTOR ),
 	DEFINE_FIELD( CTripmineGrenade, m_pRealOwner, FIELD_EDICT ),
+	DEFINE_FIELD( CTripmineGrenade, m_pBeamSpr, FIELD_CLASSPTR ),
 };
 
 IMPLEMENT_SAVERESTORE( CTripmineGrenade, CGrenade )
@@ -147,6 +150,7 @@ void CTripmineGrenade::Precache( void )
 	PRECACHE_SOUND( "weapons/mine_deploy.wav" );
 	PRECACHE_SOUND( "weapons/mine_activate.wav" );
 	PRECACHE_SOUND( "weapons/mine_charge.wav" );
+	PRECACHE_MODEL( "sprites/animglow01.spr");
 }
 
 void CTripmineGrenade::UpdateOnRemove()
@@ -237,6 +241,11 @@ void CTripmineGrenade::KillBeam( void )
 		UTIL_Remove( m_pBeam );
 		m_pBeam = NULL;
 	}
+	if( m_pBeamSpr )
+	{
+		UTIL_Remove( m_pBeamSpr );
+		m_pBeamSpr = NULL;
+	}
 }
 
 void CTripmineGrenade::MakeBeam( void )
@@ -260,6 +269,11 @@ void CTripmineGrenade::MakeBeam( void )
 	m_pBeam->SetColor( 0, 214, 198 );
 	m_pBeam->SetScrollRate( 255 );
 	m_pBeam->SetBrightness( 64 );
+	m_pBeamSpr = CSprite::SpriteCreate( "sprites/animglow01.spr", vecTmpEnd, TRUE );
+	m_pBeamSpr->SetTransparency( kRenderGlow, 0, 214, 198, 198, kRenderFxNoDissipation );
+	m_pBeamSpr->SetScale( 0.1 );
+	m_pBeamSpr->pev->framerate = 16;
+	m_pBeamSpr->TurnOn();
 }
 
 void CTripmineGrenade::BeamBreakThink( void )
@@ -307,6 +321,19 @@ void CTripmineGrenade::BeamBreakThink( void )
 		Killed( VARS( pev->owner ), GIB_NORMAL );
 		return;
 	}
+
+	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
+		WRITE_BYTE(TE_DLIGHT);
+		WRITE_COORD(tr.vecEndPos.x);	// X
+		WRITE_COORD(tr.vecEndPos.y);	// Y
+		WRITE_COORD(tr.vecEndPos.z);	// Z
+		WRITE_BYTE( 2 );		// radius * 0.1
+		WRITE_BYTE( 0 );		// r
+		WRITE_BYTE( 214 );		// g
+		WRITE_BYTE( 198 );		// b
+		WRITE_BYTE( 5 );		// time * 10
+		WRITE_BYTE( 3 );		// decay * 0.1
+	MESSAGE_END( );
 
 	pev->nextthink = gpGlobals->time + 0.1;
 }
@@ -515,4 +542,33 @@ void CTripmine::WeaponIdle( void )
 	}
 
 	SendWeaponAnim( iAnim );
+}
+
+//=========================================================
+// DeactivateTripmines - removes all tripmines owned by
+// the provided player. Should only be used upon death.
+//
+// Made this global on purpose.
+//=========================================================
+void DeactivateTripmines( CBasePlayer *pOwner )
+{
+	edict_t *pFind; 
+
+	pFind = FIND_ENTITY_BY_CLASSNAME( NULL, "monster_tripmine" );
+
+	while( !FNullEnt( pFind ) )
+	{
+		CBaseEntity *pEnt = CBaseEntity::Instance( pFind );
+		CTripmineGrenade *pTripmine = (CTripmineGrenade *)pEnt;
+
+		if( pTripmine )
+		{
+			if( pTripmine->m_pRealOwner == pOwner->edict() ) // use internal m_pRealOwner here
+			{
+				UTIL_Remove( pTripmine ); // This should delete the beam too...
+			}
+		}
+
+		pFind = FIND_ENTITY_BY_CLASSNAME( pFind, "monster_tripmine" );
+	}
 }

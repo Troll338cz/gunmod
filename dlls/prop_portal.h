@@ -13,8 +13,12 @@ public:
 	void ClosePortal();
 
 	void PortalTouch(CBaseEntity *pOther);
+	void PortalDebug();
 
 	BOOL m_bBlue = FALSE;
+	int m_spriteTexture;
+	const Vector ColorBlue = {60, 190, 240};
+	const Vector ColorOrange = {230, 130, 30};
 };
 
 #endif // PROP_PORTAL_H

@@ -184,6 +184,10 @@ void CHalfLifeMultiplay::RefreshSkillData( void )
 
 	// hornet
 	gSkillData.plrDmgHornet = 10;
+
+	// Sniper Rifle
+	gSkillData.plrDmg762 = 100;
+        gSkillData.monDmg762 = 100;
 }
 
 // longest the intermission can last, in seconds
@@ -637,7 +641,7 @@ void CHalfLifeMultiplay::PlayerSpawn( CBasePlayer *pPlayer )
 	
 	if( pPlayer->m_santaHat )
 	{
-		ALERT(at_console, "bruh\n");
+//		ALERT(at_console, "bruh\n");
 		pPlayer->pev->effects &= ~EF_NODRAW;
 	}
 }

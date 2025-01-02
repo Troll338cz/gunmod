@@ -13,9 +13,6 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-//=========================================================
-// shock - projectile shot from shockrifles.
-//=========================================================
 
 #include	"extdll.h"
 #include	"util.h"
@@ -31,53 +28,256 @@
 #include	"gamerules.h"
 #include	"customentity.h"
 #include	"shake.h"
+#include	"shock.h"
 
 //=========================================================
-// Shockrifle projectile
+// shockparticles - effects on player hit
 //=========================================================
-class CShock : public CBaseAnimating
+
+class CSparkEffects:public CPointEntity
 {
-public:
-	void Spawn(void);
-	void Precache();
+	void Spawn( void );
+	void Think( void );
+private:
+	int iFrameCounter;
+	Vector BeamColor;
+};
+LINK_ENTITY_TO_CLASS( shockparticles, CSparkEffects )
 
-	static void Shoot(entvars_t *pevOwner, const Vector angles, const Vector vecStart, const Vector vecVelocity);
-	void Touch(CBaseEntity *pOther);
-	void EXPORT FlyThink();
+void CSparkEffects::Spawn( void )
+{
+	UTIL_SetOrigin( pev, pev->origin );
+	pev->solid = SOLID_NOT;
+	pev->effects = EF_NODRAW;
+	pev->v_angle = g_vecZero;
 
-	virtual int		Save(CSave &save);
-	virtual int		Restore(CRestore &restore);
-	static	TYPEDESCRIPTION m_SaveData[];
-	
-	virtual float TouchGravGun( CBaseEntity *attacker, int stage )
+	if(pev->dmg == 0) // Default amount
+		pev->dmg = 100;
+
+	UTIL_SetSize( pev, Vector( -16, -16, 0 ), Vector( 16, 16, 64) );
+	pev->nextthink = gpGlobals->time + 0.2;
+}
+
+void CSparkEffects::Think( void )
+{
+	if(iFrameCounter > pev->dmg)
 	{
-		pev->owner = attacker->edict();
-		if( stage == 2 )
-		{
-			UTIL_MakeVectors( attacker->pev->v_angle + attacker->pev->punchangle);
-			Vector atarget = UTIL_VecToAngles(gpGlobals->v_forward);
-			pev->angles.x = UTIL_AngleMod(pev->angles.x);
-			pev->angles.y = UTIL_AngleMod(pev->angles.y);
-			pev->angles.z = UTIL_AngleMod(pev->angles.z);
-			atarget.x = UTIL_AngleMod(atarget.x);
-			atarget.y = UTIL_AngleMod(atarget.y);
-			atarget.z = UTIL_AngleMod(atarget.z);
-			pev->avelocity.x = UTIL_AngleDiff(atarget.x, pev->angles.x) * 10;
-			pev->avelocity.y = UTIL_AngleDiff(atarget.y, pev->angles.y) * 10;
-			pev->avelocity.z = UTIL_AngleDiff(atarget.z, pev->angles.z) * 10;
-		}
-
-		return 2000;
+		SetThink( NULL );
+		UTIL_Remove(this);
 	}
 
-	void CreateEffects();
-	void ClearEffects();
+	if( pev->owner )
+	{
+		pev->aiment = pev->owner;
+		pev->movetype = MOVETYPE_FOLLOW; 
+	}
+	else
+	{
+		UTIL_Remove(this);
+	}
 
-	CBeam *m_pBeam;
-	CBeam *m_pNoise;
-	CSprite *m_pSprite;
-	int m_iTrail;
+	switch(RANDOM_LONG(0,2))
+	{
+	case 0:
+		BeamColor = Vector(0, 198, 252);
+		break;
+	case 1:
+		BeamColor = Vector(74, 126, 247);
+		break;
+	case 2:
+		BeamColor = Vector(173, 255, 251);
+		break;
+	}
+
+	Vector rand1 = Vector( RANDOM_FLOAT(-this->pev->size.x, this->pev->size.x), RANDOM_FLOAT(-this->pev->size.y, this->pev->size.y), RANDOM_FLOAT(-this->pev->size.z, this->pev->size.z) );
+	Vector rand2 = Vector( RANDOM_FLOAT(-this->pev->size.x, this->pev->size.x), RANDOM_FLOAT(-this->pev->size.y, this->pev->size.y), RANDOM_FLOAT(-this->pev->size.z, this->pev->size.z) );
+
+        MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
+                WRITE_BYTE( TE_BEAMPOINTS );
+                WRITE_COORD( pev->origin.x + rand1.x / 2 );
+                WRITE_COORD( pev->origin.y + rand1.y / 2 );
+                WRITE_COORD( pev->origin.z + rand1.z );
+                WRITE_COORD( pev->origin.x + rand2.x / 2 );
+                WRITE_COORD( pev->origin.y + rand2.y / 2 );
+                WRITE_COORD( pev->origin.z + rand2.z );
+                WRITE_SHORT( g_sModelIndexLaser ); // model
+                WRITE_BYTE( 0 ); // framestart?
+                WRITE_BYTE( 0 ); // framerate?
+                WRITE_BYTE( 5 ); // life
+                WRITE_BYTE( 5 ); // width
+                WRITE_BYTE( 20 ); // noise
+                WRITE_BYTE( BeamColor.x ); // r, g, b
+                WRITE_BYTE( BeamColor.y ); // r, g, b
+                WRITE_BYTE( BeamColor.z ); // r, g, b
+                WRITE_BYTE( 200 ); // brightness
+                WRITE_BYTE( 0 ); // speed?
+        MESSAGE_END();
+
+	UTIL_Sparks( pev->origin + Vector( RANDOM_FLOAT(-this->pev->size.x, this->pev->size.x), RANDOM_FLOAT(-this->pev->size.y, this->pev->size.y), RANDOM_FLOAT(-this->pev->size.z, this->pev->size.z)) );
+
+//	printf("%d\n",iFrameCounter);
+	pev->nextthink = gpGlobals->time + 0.001;
+	iFrameCounter++;
+}
+
+
+const char *sparktrailtargets[] = 
+{
+	"player",
+	"monster_tripmine",
+	"monster_snark",
+	"monster_satchel",
+	"monster_bloater",
+	"monster_snark",
+	"monster_rat",
+	"monster_babycrab",
+	"monster_cockroach",
+	"monster_flyer_flock",
+	"monster_headcrab",
+	"monster_leech",
+	"prop",
+	"monster_alien_controller",
+	"monster_alien_slave",
+	"monster_barney",
+	"monster_bullchicken",
+	"monster_houndeye",
+	"monster_human_assassin",
+	"monster_human_grunt",
+	"monster_scientist",
+	"monster_zombie",
+	"monster_alien_grunt",
+	"monster_bigmomma",
+	"monster_gargantua",
+	"monster_ichthyosaur",
+	"ammo_spore"
 };
+
+//=========================================================
+// lightning1 - First stage of lightning chain - Chain
+//=========================================================
+class CSparkTrail1:public CPointEntity
+{
+	void Spawn( void );
+	void Think( void );
+private:
+	Vector BeamColor;
+};
+
+void CSparkTrail1::Spawn( void )
+{
+	UTIL_SetOrigin( pev, pev->origin );
+	pev->solid = SOLID_NOT;
+	pev->effects = EF_NODRAW;
+	pev->v_angle = g_vecZero;
+
+	pev->nextthink = gpGlobals->time + 0.2;// let targets spawn!
+}
+
+void CSparkTrail1::Think( void )
+{
+	if( pev->owner )
+	{
+		CBaseEntity *searchtargets = NULL;
+		while( ( searchtargets = UTIL_FindEntityInSphere( searchtargets, pev->origin, 200 ) ) != NULL )
+		{
+			switch(RANDOM_LONG(0,2))
+			{
+			case 0:
+				BeamColor = Vector(0, 198, 252);
+				break;
+			case 1:
+				BeamColor = Vector(74, 126, 247);
+				break;
+			case 2:
+				BeamColor = Vector(173, 255, 251);
+				break;
+			}
+	
+			for( size_t uiIndex = 0; uiIndex < ARRAYSIZE( sparktrailtargets ); ++uiIndex )
+			{
+				if( strcmp( STRING(searchtargets->pev->classname), sparktrailtargets[ uiIndex ] ) == 0 && this->pev != searchtargets->pev )
+				{
+				        MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
+				                WRITE_BYTE( TE_BEAMPOINTS );
+				                WRITE_COORD( pev->origin.x );
+				                WRITE_COORD( pev->origin.y );
+				                WRITE_COORD( pev->origin.z );
+				                WRITE_COORD( searchtargets->pev->origin.x );
+				                WRITE_COORD( searchtargets->pev->origin.y );
+				                WRITE_COORD( searchtargets->pev->origin.z );
+				                WRITE_SHORT( g_sModelIndexLaser ); // model
+				                WRITE_BYTE( 0 ); // framestart?
+				                WRITE_BYTE( 10 ); // framerate?
+				                WRITE_BYTE( 15 ); // life
+				                WRITE_BYTE( 20 ); // width
+				                WRITE_BYTE( 100 ); // noise
+				                WRITE_BYTE( BeamColor.x ); // r, g, b
+				                WRITE_BYTE( BeamColor.y ); // r, g, b
+				                WRITE_BYTE( BeamColor.z ); // r, g, b
+				                WRITE_BYTE( 200 ); // brightness
+				                WRITE_BYTE( 0 ); // speed?
+	        			MESSAGE_END();
+
+					if( strcmp( STRING(searchtargets->pev->classname), "monster_satchel" ) != 0 ) // Dont spark around satchels
+					{
+						CSparkEffects *pSparks = (CSparkEffects *)Create( "shockparticles", searchtargets->pev->origin, Vector(0,0,0), edict() );
+						pSparks->pev->owner = searchtargets->edict();
+						pSparks->pev->dmg = RANDOM_LONG( 30, 80 );
+					}
+					else
+					{
+						searchtargets->Use( this, this, USE_ON, 0 );
+					}
+
+
+					CBaseEntity *pLight2 = CBaseEntity::Create( "lightning2", searchtargets->pev->origin, Vector(0,0,0), NULL );
+					pLight2->pev->owner = this->pev->owner;
+
+					//printf("%s\n", STRING(searchtargets->pev->classname));
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		UTIL_Remove(this);
+	}
+}
+
+LINK_ENTITY_TO_CLASS( lightning1, CSparkTrail1 )
+
+//=========================================================
+// lightning2 - Second stage of lightning chain - Damage
+//=========================================================
+class CSparkTrail2:public CPointEntity
+{
+	void Spawn( void );
+	void Think( void );
+};
+LINK_ENTITY_TO_CLASS( lightning2, CSparkTrail2 )
+
+void CSparkTrail2::Spawn( void )
+{
+	UTIL_SetOrigin( pev, pev->origin );
+	pev->solid = SOLID_NOT;
+	pev->effects = EF_NODRAW;
+	pev->v_angle = g_vecZero;
+
+	pev->nextthink = gpGlobals->time + 0.2;// let targets spawn!
+}
+
+void CSparkTrail2::Think( void )
+{
+	if( pev->owner )
+	{
+		::RadiusDamage( pev->origin, pev, VARS( pev->owner ), 15, 32, CLASS_NONE, DMG_SHOCK | DMG_ALWAYSGIB );
+	}
+	else
+	{
+		UTIL_Remove(this);
+	}
+}
 
 LINK_ENTITY_TO_CLASS(shock_beam, CShock)
 
@@ -102,6 +302,9 @@ void CShock::Spawn(void)
 	pev->dmg = 10;
 	UTIL_SetSize(pev, Vector(-4, -4, -4), Vector(4, 4, 4));
 
+	if( pev->flags & FL_IMMUNE_LAVA )
+		pev->dmg = 35;
+
 	CreateEffects();
 	SetThink( &CShock::FlyThink );
 	pev->nextthink = gpGlobals->time;
@@ -125,7 +328,7 @@ void CShock::FlyThink()
 		RadiusDamage(pev->origin, pev, pevOwner ? pevOwner : pev, 100, 150, CLASS_NONE, DMG_SHOCK | DMG_ALWAYSGIB );
 		ClearEffects();
 		SetThink( &CBaseEntity::SUB_Remove );
-		pev->nextthink = gpGlobals->time;
+		pev->nextthink = gpGlobals->time + 0.01;
 	}
 	else
 		pev->nextthink = gpGlobals->time + 0.05;
@@ -170,7 +373,7 @@ void CShock::Touch(CBaseEntity *pOther)
 	ClearEffects();
 	
 	if( pOther->IsPlayer() )
-		UTIL_ScreenFade( pOther, Vector( 0, 200, 200 ), 0.3, 0.3, 255, FFADE_IN );
+		UTIL_ScreenFade( pOther, Vector( 0, 200, 200 ), 0.3, 0.3, 150, FFADE_IN ); // 255
 	
 	if (!pOther->pev->takedamage)
 	{
@@ -205,6 +408,16 @@ void CShock::Touch(CBaseEntity *pOther)
 				WRITE_COORD( position.y );
 				WRITE_COORD( position.z );
 			MESSAGE_END();
+		}
+		if(pev->flags & FL_IMMUNE_LAVA) // Charged shot
+		{
+			for( int i = 0; i < RANDOM_LONG( 1, 4 ); i++ )
+				CBaseEntity::Create( "spark_shower", pev->origin, Vector(0,0,0), NULL );
+			CSparkEffects *pSparks = (CSparkEffects *)Create( "shockparticles", pev->origin, Vector(0,0,0), edict() );
+			pSparks->pev->owner = pOther->edict();
+			pSparks->pev->dmg = RANDOM_LONG( 30, 80 );
+			CBaseEntity *pLight = CBaseEntity::Create( "lightning1", pev->origin, Vector(0,0,0), NULL );
+			pLight->pev->owner = pOther->edict();
 		}
 	}
 	SetThink( &CBaseEntity::SUB_Remove );
@@ -263,17 +476,23 @@ void CShock::CreateEffects()
 		WRITE_BYTE( 255 );   // r, g, b
 		WRITE_BYTE( 255 );	// brightness
 	MESSAGE_END();  // move PHS/PVS data sending into here (SEND_ALL, SEND_PVS, SEND_PHS)
-
 }
 
 void CShock::ClearEffects()
 {
-	UTIL_Remove( m_pBeam );
-	m_pBeam = NULL;
-
-	UTIL_Remove( m_pNoise );
-	m_pNoise = NULL;
-
-	UTIL_Remove( m_pSprite );
-	m_pSprite = NULL;
+	if( m_pBeam )
+	{
+		UTIL_Remove( m_pBeam );
+		m_pBeam = NULL;
+	}
+	if( m_pNoise )
+	{
+		UTIL_Remove( m_pNoise );
+		m_pNoise = NULL;
+	}
+	if( m_pSprite )
+	{
+		UTIL_Remove( m_pSprite );
+		m_pSprite = NULL;
+	}
 }

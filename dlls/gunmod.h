@@ -11,6 +11,8 @@ extern cvar_t hideandseek_minplayers;
 extern cvar_t hideandseek_brtime;
 extern cvar_t hideandseek_roundtime;
 extern cvar_t mp_toilet;
+extern cvar_t mp_toilet_speed;
+extern cvar_t mp_toilet_turn;
 extern cvar_t mp_santahat;
 
 struct score_s
@@ -24,21 +26,21 @@ typedef struct score_s score_t;
 
 struct GMData
 {
-    BOOL bBhop = FALSE;
-    float flCheckCvars;
-    BOOL bSitted = FALSE;
-    BOOL iClientValid = 0;
-    BOOL bAdmin = FALSE;
+	BOOL bBhop = FALSE;
+	float flCheckCvars;
+	BOOL bSitted = FALSE;
+	BOOL iClientValid = 0;
+	BOOL bAdmin = FALSE;
 	BOOL fSpectate;
-    float flSpectateWait = 0;
-    BOOL IsAdmin()
-    {
-        return bAdmin;
-    };
+	float flSpectateWait = 0;
+	BOOL IsAdmin()	// Troll: ??
+	{
+		return bAdmin;
+	};
 
-    char szKey[64];
+	char szKey[64];
 
-    score_t *score;
+	score_t *score;
 };
 
 void GM_RegisterCVars( void );
@@ -50,7 +52,7 @@ void GM_InitAdmins( void );
 BOOL GM_IsAdmin( edict_t *player );
 void GM_AddAdmin( edict_t *player );
 void GM_Login( edict_t *player );
-void GM_ChatLog(char *text);
+void GM_ChatLog(edict_t *pEntity, char *text);
 BOOL GM_ClientCommand( CBasePlayer *pPlayer, const char *pCmd );
 void GM_LogCmd(edict_t *pEntity, const char *cmd, const char *argv);
 BOOL GM_IsAuthidValid( CBasePlayer *player );
@@ -66,4 +68,5 @@ void GM_InitScores( void );
 const char *GM_GetAuthUID( CBasePlayer *player );
 BOOL GM_IsPlayerFucked( CBasePlayer *plr );
 void GM_WriteMutedID( void );
+BOOL GM_IsAllowedClassname( const char *classname );
 #endif

@@ -38,6 +38,7 @@
 #include "usercmd.h"
 #include "netadr.h"
 #include "pm_shared.h"
+#include "admin.h" // Admin cmds
 
 extern DLL_GLOBAL ULONG		g_ulModelIndexPlayer;
 extern DLL_GLOBAL BOOL		g_fGameOver;
@@ -220,6 +221,14 @@ void ClientKill( edict_t *pEntity )
 //	respawn( pev );
 }
 
+void KickCheater( CBasePlayer *player, const char *CheatType )
+{
+	FILE *flch;
+	flch = fopen("Cheaters.txt", "a");
+	fprintf( flch , "name: %s id: %s %s\n", GGM_PlayerName(player), GETPLAYERAUTHID(player->edict()), CheatType);
+	SERVER_COMMAND(UTIL_VarArgs("kick #%i cheater\n", GETPLAYERUSERID(player->edict()) ));
+	fclose( flch );
+}
 
 /*
 ===========
@@ -243,6 +252,9 @@ void ClientPutInServer( edict_t *pEntity )
 	pPlayer->Spawn();
 
 	GGM_ClientFirstSpawn( pPlayer );
+
+	pPlayer->m_flCheckCvars = gpGlobals->time + 10;
+	g_engfuncs.pfnQueryClientCvarValue2( pEntity, "host_ver", 116 );
 
 	// Reset interpolation during first frame
 	pPlayer->pev->effects |= EF_NOINTERP;
@@ -413,7 +425,6 @@ void Host_Say( edict_t *pEntity, int teamonly )
 		p[strlen(p)-1] = 0;
 	}
 
-
 	if( !p || !p[0] || !Q_UnicodeValidate ( p ) )
 		return;  // no character found, so say nothing
 
@@ -440,8 +451,9 @@ void Host_Say( edict_t *pEntity, int teamonly )
 	strcat( text, p );
 	strcat( text, "\n" );
 
-
-	player->m_flNextChatTime = gpGlobals->time + CHAT_INTERVAL;
+	// Troll: No delay for admins
+	if( !(player->m_gm.IsAdmin()) )
+		player->m_flNextChatTime = gpGlobals->time + CHAT_INTERVAL;
 
 	// loop through all players
 	// Start with the first player.
@@ -497,7 +509,7 @@ void Host_Say( edict_t *pEntity, int teamonly )
 		WRITE_BYTE( ENTINDEX(pEntity) );
 		WRITE_STRING( text );
 	MESSAGE_END();
-	GM_ChatLog( text );
+	GM_ChatLog( pEntity, text );
 	// echo to server console
 	g_engfuncs.pfnServerPrint( text );
 
@@ -572,10 +584,17 @@ void ClientCommand( edict_t *pEntity )
 	}
 	else if ( FStrEq(pcmd, "give" ) )
 	{
-		if ( g_flWeaponCheat != 0.0 || pPlayer->m_gm.IsAdmin() )
+		if ( CMD_ARGC() < 2 )
 		{
-			int iszItem = ALLOC_STRING( CMD_ARGV(1) );	// Make a copy of the classname
-			pPlayer->GiveNamedItem( STRING(iszItem) );
+			return;
+		}
+
+		if ( g_flWeaponCheat != 0.0 || pPlayer->m_gm.IsAdmin()  )
+		{
+			const char* iszItem = CMD_ARGV(1);
+			if(!GM_IsAllowedClassname(iszItem))
+				return;
+			GetClassPtr((CBasePlayer *)pev)->GiveNamedItem( iszItem );
 		}
 	}
 	else if ( FStrEq(pcmd, "fire") )
@@ -611,7 +630,11 @@ void ClientCommand( edict_t *pEntity )
 	else if ( FStrEq(pcmd, "drop" ) )
 	{
 		// player is dropping an item. 
-		pPlayer->DropPlayerItem((char *)CMD_ARGV(1));
+		if((gpGlobals->time >= GetClassPtr( (CBasePlayer *)pev )->m_flLastCommandTime[1]))
+		{
+			GetClassPtr( (CBasePlayer *)pev )->DropPlayerItem( (char *)CMD_ARGV( 1 ) );
+			GetClassPtr( (CBasePlayer *)pev )->m_flLastCommandTime[1] = gpGlobals->time + 1.0f;
+		}
 	}
 	else if ( FStrEq(pcmd, "fov" ) )
 	{
@@ -636,12 +659,41 @@ void ClientCommand( edict_t *pEntity )
 	{
 		pPlayer->SelectLastItem();
 	}
-	else if( FStrEq( pcmd, "specmode" ) ) // new spectator mode
+	/*else if( FStrEq( pcmd, "specmode" ) ) // new spectator mode
 	{
 		CBasePlayer *pPlayer = GetClassPtr( (CBasePlayer *)pev );
 
 		if( pPlayer->IsObserver() )
 			pPlayer->Observer_SetMode( atoi( CMD_ARGV( 1 ) ) );
+	}*/
+	else if( FStrEq( pcmd, "spectate" ) ) // clients wants to become a spectator
+	{
+
+		CBasePlayer *pPlayer = GetClassPtr( (CBasePlayer *)pev );
+		if( !pPlayer->IsObserver() )
+		{
+			// always allow admins to become a spectator
+			if( ( allow_spectators.value || mp_coop.value || pPlayer->m_gm.IsAdmin() ) && (gpGlobals->time >= pPlayer->m_flLastCommandTime[0]))
+			{
+				edict_t *pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot( pPlayer );
+				pPlayer->StartObserver( pev->origin, VARS( pentSpawnSpot )->angles );
+				pPlayer->m_bSentMsg = FALSE;
+				// notify other clients of player switching to spectator mode
+				UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "%s switched to spectator mode\n",
+						( pev->netname && ( STRING( pev->netname ) )[0] != 0 ) ? STRING( pev->netname ) : "unconnected" ) );
+				pPlayer->m_flLastCommandTime[0] = gpGlobals->time + 10.0f;
+			}
+			else
+				ClientPrint( pev, HUD_PRINTCONSOLE, "Spectator mode is disabled. (Or you are spamming it)\n" );
+		}
+		else
+		{
+			pPlayer->StopObserver();
+			pPlayer->m_bSentMsg = FALSE;
+			// notify other clients of player left spectators
+			UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "%s has left spectator mode\n",
+					( pev->netname && ( STRING( pev->netname ) )[0] != 0 ) ? STRING( pev->netname ) : "unconnected" ) );
+		}
 	}
 	else if( FStrEq( pcmd, "closemenus" ) )
 	{
@@ -663,7 +715,15 @@ void ClientCommand( edict_t *pEntity )
 		// clear 'Unknown command: VModEnable' in singleplayer
 		return;
 	}
-	else if( !GGM_ClientCommand( GetClassPtr( (CBasePlayer *)pev ), pcmd ) && !GM_ClientCommand( GetClassPtr( (CBasePlayer *)pev ), pcmd ))
+	else if( FStrEq(pcmd, "+bhop"))
+	{
+		pPlayer->m_bBhop = TRUE;
+	}
+	else if( FStrEq(pcmd, "-bhop"))
+	{
+		pPlayer->m_bBhop = FALSE;
+	}
+	else if( !GGM_ClientCommand( GetClassPtr( (CBasePlayer *)pev ), pcmd ) && !GM_ClientCommand( GetClassPtr( (CBasePlayer *)pev ), pcmd ) && ADMIN_ClientCommand( GetClassPtr( (CBasePlayer *)pev ), pcmd ) )
 	{
 		// tell the user they entered an unknown command
 		char command[128];
@@ -851,6 +911,25 @@ void PlayerPreThink( edict_t *pEntity )
 	entvars_t *pev = &pEntity->v;
 	CBasePlayer *pPlayer = (CBasePlayer *)GET_PRIVATE( pEntity );
 
+
+	if( pPlayer->m_bBhop && ( pPlayer->pev->flags & FL_ONGROUND ))
+	{
+		pPlayer->Jump();
+		pPlayer->pev->velocity.z = sqrt( 2 * 800 * 45.0 );
+	}
+	if( pPlayer->m_flCheckCvars <= gpGlobals->time )
+	{
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "r_drawentities", 112 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "gl_wh", 114 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "cl_wh", 115 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "host_build", 117 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "cscl_ver", 118 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "drm_weaponglow", 119 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "ogc", 120 );
+		g_engfuncs.pfnQueryClientCvarValue2( pEntity, "bae", 121 );
+		pPlayer->m_flCheckCvars = gpGlobals->time + 100;
+	}
+
 	if( !pPlayer )
 		ClientPutInServer( pEntity );
 
@@ -874,7 +953,7 @@ void PlayerPostThink( edict_t *pEntity )
 	if (pPlayer)
 	{
 		pPlayer->PostThink( );
-        GM_PlayerPostThink( pEntity );
+		GM_PlayerPostThink( pEntity );
 	}
 }
 
@@ -1012,7 +1091,7 @@ void ClientPrecache( void )
 	PRECACHE_SOUND( SOUND_FLASHLIGHT_OFF );
 
 // player gib sounds
-	PRECACHE_SOUND("common/bodysplat.wav");		               
+	PRECACHE_SOUND("common/bodysplat.wav");			       
 
 // player pain sounds
 	PRECACHE_SOUND("player/pl_pain2.wav");
@@ -1481,9 +1560,9 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		state->playerclass  = ent->v.playerclass;
 		if( ent->v.deadflag == DEAD_DEAD )
 			state->solid = SOLID_NOT;
-		if( ent->v.movetype == MOVETYPE_WALK || ent->v.movetype == MOVETYPE_STEP )
-			//state->effects |= EF_NOINTERP;
-			state->movetype = MOVETYPE_TOSS;
+		//if( ent->v.movetype == MOVETYPE_WALK || ent->v.movetype == MOVETYPE_STEP )
+		//	state->effects |= EF_NOINTERP;
+		//	state->movetype = MOVETYPE_TOSS;
 
 
 		// gravgun hacks
@@ -2001,7 +2080,7 @@ void UpdateClientData ( const struct edict_s *ent, int sendweapons, struct clien
 			cd->ammo_cells		= pl->ammo_uranium;
 			cd->vuser2.x		= pl->ammo_hornets;
 			cd->vuser2.y		= pl->ammo_556;
-
+			cd->vuser2.z		= pl->ammo_762;
 
 			if ( pl->m_pActiveItem )
 			{
@@ -2157,7 +2236,60 @@ void CreateInstancedBaselines ( void )
 
 void CvarValue2( const edict_t *pEnt, int requestID, const char *cvarName, const char *value )
 {
-    GM_CvarValue2( pEnt, requestID, cvarName, value );
+
+	CBasePlayer *player = (CBasePlayer * ) CBaseEntity::Instance( (edict_t*)pEnt );
+
+	if( pEnt && requestID == 112 && FStrEq( cvarName , "r_drawentities" ) && atoi(value) != 1 )
+		KickCheater( player, "wh" );
+
+	if( pEnt && requestID == 113 && FStrEq( cvarName , "r_lockpvs" ) && atoi(value)  )
+		KickCheater( player, "wh" );
+
+	if( pEnt && requestID == 114 && FStrEq( cvarName , "gl_wh" ) && atoi(value) )
+		KickCheater( player, "wh" );
+
+	if( pEnt && requestID == 115 && FStrEq( cvarName , "cl_wh" ) && atoi(value) )
+		KickCheater( player, "wh" );
+
+	if( pEnt && requestID == 116 && FStrEq( cvarName , "host_ver" ) )
+	{
+		if( !strcmp( value , "eee764" ) )
+			KickCheater( player, "cheats" );
+		if( !strcmp( value , "7a3ffb" ) )
+			KickCheater( player, "cheats" );
+		if( !strcmp( value , "235225" ) )
+			KickCheater( player, "cheats" );
+		if( !strcmp( value , "5fc42f" ) )
+			KickCheater( player, "cheats" );
+	}
+	if( pEnt && requestID == 117 && FStrEq( cvarName , "host_build" ) )
+	{
+		if( !strcmp( value , "3295" ) )
+			KickCheater( player, "cheats" );
+	}
+	if( pEnt && requestID == 119 && FStrEq( cvarName , "drm_weaponglow" ) && isdigit(value[0]) )
+	{
+		KickCheater( player, "cheats" );
+	}
+	/* CSQQ */
+	if( pEnt && requestID == 118 && FStrEq( cvarName , "cscl_ver" ) && isdigit(value[0]) )
+	{
+		KickCheater( player, "cheats" );
+	}
+	if( pEnt && requestID == 118 && FStrEq( cvarName , "nocs_ver" ) && isdigit(value[0]) )
+	{
+		KickCheater( player, "cheats" );
+	}
+	if( pEnt && requestID == 120 && FStrEq( cvarName , "ogc" ) && isdigit(value[0]) )
+	{
+		KickCheater( player, "cheats" );
+	}
+	if( pEnt && requestID == 121 && FStrEq( cvarName , "bae" ) && isdigit(value[0]) )
+	{
+		KickCheater( player, "cheats" );
+	}
+
+	GM_CvarValue2( pEnt, requestID, cvarName, value );
 	GGM_CvarValue2( pEnt, requestID, cvarName, value );
 }
 

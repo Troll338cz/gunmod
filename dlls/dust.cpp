@@ -30,6 +30,9 @@ class CDust : public CProp
 	}
 	void EXPORT TolchokTouch( CBaseEntity *pOther );
 	float deg;
+// turn
+	float yaw;
+	float VecToYaw( Vector vecDir );
 };
 
 void CDust::Precache()
@@ -72,6 +75,18 @@ void CDust::Spawn(void)
 	pev->dmg = 100;
 	pev->nextthink = gpGlobals->time + 0.1;
 	PropRespawn();
+}
+
+//=========================================================
+// VecToYaw - turns a directional vector into a yaw value
+// that points down that vector.
+//=========================================================
+float CDust::VecToYaw( Vector vecDir )
+{
+	if( vecDir.x == 0 && vecDir.y == 0 && vecDir.z == 0 )
+		return pev->angles.y;
+
+	return UTIL_VecToYaw( vecDir );
 }
 
 void CDust::PropRespawn()
@@ -128,22 +143,36 @@ void CDust::FuckThink( )
 
 			if( pev->effects & EF_NODRAW )
 				pev->effects &= ~EF_NODRAW;
+			if( pev->solid == SOLID_NOT )
+				pev->solid = SOLID_TRIGGER;
 			
-            k = TRUE;
-            Vector direction = plr->pev->origin - pev->origin;
-            direction.z = -direction.z;
-            Vector angles = UTIL_VecToAngles( direction );
+			k = TRUE;
+			Vector direction = plr->pev->origin - pev->origin;
+			direction.z = -direction.z;
+			Vector angles = UTIL_VecToAngles( direction );
 			UTIL_MakeVectors( angles );
-			pev->velocity = gpGlobals->v_forward * 400;
+			pev->velocity = gpGlobals->v_forward * mp_toilet_speed.value;
+
+			if(mp_toilet_turn.value)
+			{
+		            	yaw = VecToYaw( plr->pev->origin - pev->origin );
+		
+				if( yaw > 180 )
+					yaw -= 360;
+				if( yaw < -180 )
+					yaw += 360;
+				pev->angles.y = yaw;
+			}
 		}
 	}
 	if(!k)
-    {
-        if( !(pev->effects & EF_NODRAW) )
+	{
+        	if( !(pev->effects & EF_NODRAW) )
 			pev->effects |= EF_NODRAW;
-			
-        pev->velocity = Vector(0,0,0);
-    }
+		if( pev->solid != SOLID_NOT )
+			pev->solid = SOLID_NOT;
+        	pev->velocity = Vector(0,0,0);
+	}
     
 	pev->nextthink = gpGlobals->time + 0.001;
 }

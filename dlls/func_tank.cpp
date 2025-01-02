@@ -19,8 +19,8 @@
 #include "effects.h"
 #include "weapons.h"
 #include "explode.h"
-
 #include "player.h"
+
 
 #define SF_TANK_ACTIVE			0x0001
 #define SF_TANK_PLAYER			0x0002
@@ -129,6 +129,7 @@ protected:
 	int			m_spread;		// firing spread
 	string_t	m_iszMaster;	// Master entity (game_team_master or multisource)
 };
+
 
 TYPEDESCRIPTION	CFuncTank::m_SaveData[] =
 {
@@ -1018,3 +1019,9 @@ void CFuncTankControls::Spawn( void )
 
 	CBaseEntity::Spawn();
 }
+// OPFOR
+LINK_ENTITY_TO_CLASS(func_tank_of, CFuncTank);
+LINK_ENTITY_TO_CLASS(func_tanklaser_of, CFuncTankLaser);
+LINK_ENTITY_TO_CLASS(func_tankrocket_of, CFuncTankRocket);
+LINK_ENTITY_TO_CLASS(func_tankmortar_of, CFuncTankMortar);
+LINK_ENTITY_TO_CLASS(func_tankcontrols_of, CFuncTankControls);

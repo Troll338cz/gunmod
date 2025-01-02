@@ -2933,10 +2933,13 @@ bool GGM_ClientCommand( CBasePlayer *pPlayer, const char *pCmd )
 	}
 	else if( FStrEq(pCmd, "client") )
 	{
+		CLIENT_PRINTF( pPlayer->edict(), print_console, "Ur an asshole, this crash is fixed here!\n" );
+/*
 		char args[256] = {0};
 		strncpy(args, CMD_ARGS(),254);
 		strcat(args,"\n");
 		CLIENT_COMMAND( pPlayer->edict(), args );
+*/
 		return true;
 	}
 	else if( COOP_ClientCommand( pPlayer->edict() ) )

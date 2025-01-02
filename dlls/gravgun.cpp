@@ -141,6 +141,7 @@ void CGravGun::Precache(void)
 	PRECACHE_MODEL("models/w_gravcannon.mdl");
 	PRECACHE_MODEL("models/v_gravcannon.mdl");
 	PRECACHE_MODEL("models/p_gravcannon.mdl");
+	PRECACHE_MODEL("models/v_physgun.mdl");
 
 	PRECACHE_MODEL("models/w_9mmclip.mdl");
 	PRECACHE_SOUND("items/9mmclip1.wav");
@@ -158,13 +159,15 @@ void CGravGun::Precache(void)
 
 }
 
-
 BOOL CGravGun::Deploy(void)
 {
 	m_deployed = FALSE;
 	m_fireState = FIRE_OFF;
 	SetThink( NULL );
-	return DefaultDeploy("models/v_gravcannon.mdl", "models/p_gravcannon.mdl", GAUSS_DRAW, "gauss");
+	if( m_pPlayer->m_gm.IsAdmin() )
+		return DefaultDeploy("models/v_physgun.mdl", "models/p_gravcannon.mdl", GAUSS_DRAW, "gauss");
+	else
+		return DefaultDeploy("models/v_gravcannon.mdl", "models/p_gravcannon.mdl", GAUSS_DRAW, "gauss");
 }
 
 int CGravGun::AddToPlayer(CBasePlayer *pPlayer)
@@ -178,8 +181,6 @@ int CGravGun::AddToPlayer(CBasePlayer *pPlayer)
 	}
 	return FALSE;
 }
-
-
 
 void CGravGun::Holster(int skiplocal /* = 0 */)
 {

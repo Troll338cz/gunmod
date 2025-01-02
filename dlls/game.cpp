@@ -31,7 +31,8 @@ cvar_t friendlyfire	= { "mp_friendlyfire","0", FCVAR_SERVER };
 cvar_t falldamage	= { "mp_falldamage","0", FCVAR_SERVER };
 cvar_t weaponstay	= { "mp_weaponstay","0", FCVAR_SERVER };
 cvar_t selfgauss	= { "mp_selfgauss", "1", FCVAR_SERVER };
-cvar_t satchelfix	= { "mp_satchelfix", "0", FCVAR_SERVER };
+cvar_t satchelfix	= { "mp_satchelfix", "1", FCVAR_SERVER };
+cvar_t tripminefix	= { "mp_tripminefix", "1", FCVAR_SERVER };
 cvar_t forcerespawn	= { "mp_forcerespawn","1", FCVAR_SERVER };
 cvar_t flashlight	= { "mp_flashlight","0", FCVAR_SERVER };
 cvar_t aimcrosshair	= { "mp_autocrosshair","1", FCVAR_SERVER };
@@ -374,6 +375,10 @@ cvar_t	sk_9mm_bullet1 = {"sk_9mm_bullet1","0"};
 cvar_t	sk_9mm_bullet2 = {"sk_9mm_bullet2","0"};
 cvar_t	sk_9mm_bullet3 = {"sk_9mm_bullet3","0"};
 
+// Sniper Rifle
+cvar_t  sk_plr_762_bullet1 = { "sk_plr_762_bullet1", "0" };
+cvar_t  sk_plr_762_bullet2 = { "sk_plr_762_bullet2", "0" };
+cvar_t  sk_plr_762_bullet3 = { "sk_plr_762_bullet3", "0" };
 
 // HORNET
 cvar_t	sk_hornet_dmg1 = {"sk_hornet_dmg1","0"};
@@ -446,6 +451,225 @@ cvar_t	sk_player_leg3	= { "sk_player_leg3","1" };
 
 // END Cvars for Skill Level settings
 
+// OPFOR
+// Otis
+cvar_t	sk_otis_health1 = { "sk_otis_health1", "0" };
+cvar_t	sk_otis_health2 = { "sk_otis_health2", "0" };
+cvar_t	sk_otis_health3 = { "sk_otis_health3", "0" };
+
+// Pitdrone
+cvar_t	sk_pitdrone_health1 = { "sk_pitdrone_health1", "0" };
+cvar_t	sk_pitdrone_health2 = { "sk_pitdrone_health2", "0" };
+cvar_t	sk_pitdrone_health3 = { "sk_pitdrone_health3", "0" };
+
+cvar_t	sk_pitdrone_dmg_bite1 = { "sk_pitdrone_dmg_bite1", "0" };
+cvar_t	sk_pitdrone_dmg_bite2 = { "sk_pitdrone_dmg_bite2", "0" };
+cvar_t	sk_pitdrone_dmg_bite3 = { "sk_pitdrone_dmg_bite3", "0" };
+
+cvar_t	sk_pitdrone_dmg_whip1 = { "sk_pitdrone_dmg_whip1", "0" };
+cvar_t	sk_pitdrone_dmg_whip2 = { "sk_pitdrone_dmg_whip2", "0" };
+cvar_t	sk_pitdrone_dmg_whip3 = { "sk_pitdrone_dmg_whip3", "0" };
+
+cvar_t	sk_pitdrone_dmg_spit1 = { "sk_pitdrone_dmg_spit1", "0" };
+cvar_t	sk_pitdrone_dmg_spit2 = { "sk_pitdrone_dmg_spit2", "0" };
+cvar_t	sk_pitdrone_dmg_spit3 = { "sk_pitdrone_dmg_spit3", "0" };
+
+// Hgrunt Ally
+cvar_t	sk_hgrunt_ally_health1 = { "sk_hgrunt_ally_health1", "0" };
+cvar_t	sk_hgrunt_ally_health2 = { "sk_hgrunt_ally_health2", "0" };
+cvar_t	sk_hgrunt_ally_health3 = { "sk_hgrunt_ally_health3", "0" };
+
+cvar_t	sk_hgrunt_ally_kick1 = { "sk_hgrunt_ally_kick1", "0" };
+cvar_t	sk_hgrunt_ally_kick2 = { "sk_hgrunt_ally_kick2", "0" };
+cvar_t	sk_hgrunt_ally_kick3 = { "sk_hgrunt_ally_kick3", "0" };
+
+cvar_t	sk_hgrunt_ally_pellets1 = { "sk_hgrunt_ally_pellets1", "0" };
+cvar_t	sk_hgrunt_ally_pellets2 = { "sk_hgrunt_ally_pellets2", "0" };
+cvar_t	sk_hgrunt_ally_pellets3 = { "sk_hgrunt_ally_pellets3", "0" };
+
+cvar_t	sk_hgrunt_ally_gspeed1 = { "sk_hgrunt_ally_gspeed1", "0" };
+cvar_t	sk_hgrunt_ally_gspeed2 = { "sk_hgrunt_ally_gspeed2", "0" };
+cvar_t	sk_hgrunt_ally_gspeed3 = { "sk_hgrunt_ally_gspeed3", "0" };
+
+// Medic Ally 
+cvar_t	sk_medic_ally_health1 = { "sk_medic_ally_health1", "0" };
+cvar_t	sk_medic_ally_health2 = { "sk_medic_ally_health2", "0" };
+cvar_t	sk_medic_ally_health3 = { "sk_medic_ally_health3", "0" };
+
+cvar_t	sk_medic_ally_kick1 = { "sk_medic_ally_kick1", "0" };
+cvar_t	sk_medic_ally_kick2 = { "sk_medic_ally_kick2", "0" };
+cvar_t	sk_medic_ally_kick3 = { "sk_medic_ally_kick3", "0" };
+
+cvar_t	sk_medic_ally_gspeed1 = { "sk_medic_ally_gspeed1", "0" };
+cvar_t	sk_medic_ally_gspeed2 = { "sk_medic_ally_gspeed2", "0" };
+cvar_t	sk_medic_ally_gspeed3 = { "sk_medic_ally_gspeed3", "0" };
+
+cvar_t	sk_medic_ally_heal1 = { "sk_medic_ally_heal1", "0" };
+cvar_t	sk_medic_ally_heal2 = { "sk_medic_ally_heal2", "0" };
+cvar_t	sk_medic_ally_heal3 = { "sk_medic_ally_heal3", "0" };
+
+// Torch Ally 
+cvar_t	sk_torch_ally_health1 = { "sk_torch_ally_health1", "0" };
+cvar_t	sk_torch_ally_health2 = { "sk_torch_ally_health2", "0" };
+cvar_t	sk_torch_ally_health3 = { "sk_torch_ally_health3", "0" };
+
+cvar_t	sk_torch_ally_kick1 = { "sk_torch_ally_kick1", "0" };
+cvar_t	sk_torch_ally_kick2 = { "sk_torch_ally_kick2", "0" };
+cvar_t	sk_torch_ally_kick3 = { "sk_torch_ally_kick3", "0" };
+
+cvar_t	sk_torch_ally_gspeed1 = { "sk_torch_ally_gspeed1", "0" };
+cvar_t	sk_torch_ally_gspeed2 = { "sk_torch_ally_gspeed2", "0" };
+cvar_t	sk_torch_ally_gspeed3 = { "sk_torch_ally_gspeed3", "0" };
+
+// Male Assassin 
+cvar_t	sk_massassin_health1 = { "sk_massassin_health1", "0" };
+cvar_t	sk_massassin_health2 = { "sk_massassin_health2", "0" };
+cvar_t	sk_massassin_health3 = { "sk_massassin_health3", "0" };
+
+cvar_t	sk_massassin_kick1 = { "sk_massassin_kick1", "0" };
+cvar_t	sk_massassin_kick2 = { "sk_massassin_kick2", "0" };
+cvar_t	sk_massassin_kick3 = { "sk_massassin_kick3", "0" };
+
+cvar_t	sk_massassin_gspeed1 = { "sk_massassin_gspeed1", "0" };
+cvar_t	sk_massassin_gspeed2 = { "sk_massassin_gspeed2", "0" };
+cvar_t	sk_massassin_gspeed3 = { "sk_massassin_gspeed3", "0" };
+
+// ShockTrooper 
+cvar_t	sk_shocktrooper_health1 = { "sk_shocktrooper_health1", "0" };
+cvar_t	sk_shocktrooper_health2 = { "sk_shocktrooper_health2", "0" };
+cvar_t	sk_shocktrooper_health3 = { "sk_shocktrooper_health3", "0" };
+
+cvar_t	sk_shocktrooper_kick1 = { "sk_shocktrooper_kick1", "0" };
+cvar_t	sk_shocktrooper_kick2 = { "sk_shocktrooper_kick2", "0" };
+cvar_t	sk_shocktrooper_kick3 = { "sk_shocktrooper_kick3", "0" };
+
+cvar_t	sk_shocktrooper_gspeed1 = { "sk_shocktrooper_gspeed1", "0" };
+cvar_t	sk_shocktrooper_gspeed2 = { "sk_shocktrooper_gspeed2", "0" };
+cvar_t	sk_shocktrooper_gspeed3 = { "sk_shocktrooper_gspeed3", "0" };
+
+cvar_t	sk_shocktrooper_maxcharge1 = { "sk_shocktrooper_maxcharge1", "0" };
+cvar_t	sk_shocktrooper_maxcharge2 = { "sk_shocktrooper_maxcharge2", "0" };
+cvar_t	sk_shocktrooper_maxcharge3 = { "sk_shocktrooper_maxcharge3", "0" };
+
+cvar_t	sk_shocktrooper_rchgspeed1 = { "sk_shocktrooper_rchgspeed1", "0" };
+cvar_t	sk_shocktrooper_rchgspeed2 = { "sk_shocktrooper_rchgspeed2", "0" };
+cvar_t	sk_shocktrooper_rchgspeed3 = { "sk_shocktrooper_rchgspeed3", "0" };
+
+// Scientist
+cvar_t	sk_cleansuit_scientist_health1 = { "sk_cleansuit_scientist_health1", "0" };
+cvar_t	sk_cleansuit_scientist_health2 = { "sk_cleansuit_scientist_health2", "0" };
+cvar_t	sk_cleansuit_scientist_health3 = { "sk_cleansuit_scientist_health3", "0" };
+
+cvar_t	sk_cleansuit_scientist_heal1 = { "sk_cleansuit_scientist_heal1", "0" };
+cvar_t	sk_cleansuit_scientist_heal2 = { "sk_cleansuit_scientist_heal2", "0" };
+cvar_t	sk_cleansuit_scientist_heal3 = { "sk_cleansuit_scientist_heal3", "0" };
+
+// Voltigore
+cvar_t	sk_voltigore_health1 = { "sk_voltigore_health1", "0" };
+cvar_t	sk_voltigore_health2 = { "sk_voltigore_health2", "0" };
+cvar_t	sk_voltigore_health3 = { "sk_voltigore_health3", "0" };
+
+cvar_t	sk_voltigore_dmg_punch1 = { "sk_voltigore_dmg_punch1", "0" };
+cvar_t	sk_voltigore_dmg_punch2 = { "sk_voltigore_dmg_punch2", "0" };
+cvar_t	sk_voltigore_dmg_punch3 = { "sk_voltigore_dmg_punch3", "0" };
+
+cvar_t	sk_voltigore_dmg_beam1 = { "sk_voltigore_dmg_beam1", "0" };
+cvar_t	sk_voltigore_dmg_beam2 = { "sk_voltigore_dmg_beam2", "0" };
+cvar_t	sk_voltigore_dmg_beam3 = { "sk_voltigore_dmg_beam3", "0" };
+
+// Baby Voltigore
+cvar_t	sk_babyvoltigore_health1 = { "sk_babyvoltigore_health1", "0" };
+cvar_t	sk_babyvoltigore_health2 = { "sk_babyvoltigore_health2", "0" };
+cvar_t	sk_babyvoltigore_health3 = { "sk_babyvoltigore_health3", "0" };
+
+cvar_t	sk_babyvoltigore_dmg_punch1 = { "sk_babyvoltigore_dmg_punch1", "0" };
+cvar_t	sk_babyvoltigore_dmg_punch2 = { "sk_babyvoltigore_dmg_punch2", "0" };
+cvar_t	sk_babyvoltigore_dmg_punch3 = { "sk_babyvoltigore_dmg_punch3", "0" };
+
+// Pitworm
+cvar_t	sk_pitworm_health1 = { "sk_pitworm_health1", "0" };
+cvar_t	sk_pitworm_health2 = { "sk_pitworm_health2", "0" };
+cvar_t	sk_pitworm_health3 = { "sk_pitworm_health3", "0" };
+
+cvar_t	sk_pitworm_dmg_swipe1 = { "sk_pitworm_dmg_swipe1", "0" };
+cvar_t	sk_pitworm_dmg_swipe2 = { "sk_pitworm_dmg_swipe2", "0" };
+cvar_t	sk_pitworm_dmg_swipe3 = { "sk_pitworm_dmg_swipe3", "0" };
+
+cvar_t	sk_pitworm_dmg_beam1 = { "sk_pitworm_dmg_beam1", "0" };
+cvar_t	sk_pitworm_dmg_beam2 = { "sk_pitworm_dmg_beam2", "0" };
+cvar_t	sk_pitworm_dmg_beam3 = { "sk_pitworm_dmg_beam3", "0" };
+
+// Geneworm
+cvar_t	sk_geneworm_health1 = { "sk_geneworm_health1", "0" };
+cvar_t	sk_geneworm_health2 = { "sk_geneworm_health2", "0" };
+cvar_t	sk_geneworm_health3 = { "sk_geneworm_health3", "0" };
+
+cvar_t	sk_geneworm_dmg_spit1 = { "sk_geneworm_dmg_spit1", "0" };
+cvar_t	sk_geneworm_dmg_spit2 = { "sk_geneworm_dmg_spit2", "0" };
+cvar_t	sk_geneworm_dmg_spit3 = { "sk_geneworm_dmg_spit3", "0" };
+
+cvar_t	sk_geneworm_dmg_hit1 = { "sk_geneworm_dmg_hit1", "0" };
+cvar_t	sk_geneworm_dmg_hit2 = { "sk_geneworm_dmg_hit2", "0" };
+cvar_t	sk_geneworm_dmg_hit3 = { "sk_geneworm_dmg_hit3", "0" };
+
+// Zombie Barney
+cvar_t	sk_zombie_barney_health1 = { "sk_zombie_barney_health1", "0" };
+cvar_t	sk_zombie_barney_health2 = { "sk_zombie_barney_health2", "0" };
+cvar_t	sk_zombie_barney_health3 = { "sk_zombie_barney_health3", "0" };
+
+cvar_t	sk_zombie_barney_dmg_one_slash1 = { "sk_zombie_barney_dmg_one_slash1", "0" };
+cvar_t	sk_zombie_barney_dmg_one_slash2 = { "sk_zombie_barney_dmg_one_slash2", "0" };
+cvar_t	sk_zombie_barney_dmg_one_slash3 = { "sk_zombie_barney_dmg_one_slash3", "0" };
+
+cvar_t	sk_zombie_barney_dmg_both_slash1 = { "sk_zombie_barney_dmg_both_slash1", "0" };
+cvar_t	sk_zombie_barney_dmg_both_slash2 = { "sk_zombie_barney_dmg_both_slash2", "0" };
+cvar_t	sk_zombie_barney_dmg_both_slash3 = { "sk_zombie_barney_dmg_both_slash3", "0" };
+
+// Zombie Soldier
+cvar_t	sk_zombie_soldier_health1 = { "sk_zombie_soldier_health1", "0" };
+cvar_t	sk_zombie_soldier_health2 = { "sk_zombie_soldier_health2", "0" };
+cvar_t	sk_zombie_soldier_health3 = { "sk_zombie_soldier_health3", "0" };
+
+cvar_t	sk_zombie_soldier_dmg_one_slash1 = { "sk_zombie_soldier_dmg_one_slash1", "0" };
+cvar_t	sk_zombie_soldier_dmg_one_slash2 = { "sk_zombie_soldier_dmg_one_slash2", "0" };
+cvar_t	sk_zombie_soldier_dmg_one_slash3 = { "sk_zombie_soldier_dmg_one_slash3", "0" };
+
+cvar_t	sk_zombie_soldier_dmg_both_slash1 = { "sk_zombie_soldier_dmg_both_slash1", "0" };
+cvar_t	sk_zombie_soldier_dmg_both_slash2 = { "sk_zombie_soldier_dmg_both_slash2", "0" };
+cvar_t	sk_zombie_soldier_dmg_both_slash3 = { "sk_zombie_soldier_dmg_both_slash3", "0" };
+
+// Gonome
+cvar_t	sk_gonome_health1 = { "sk_gonome_health1", "0" };
+cvar_t	sk_gonome_health2 = { "sk_gonome_health2", "0" };
+cvar_t	sk_gonome_health3 = { "sk_gonome_health3", "0" };
+
+cvar_t	sk_gonome_dmg_one_slash1 = { "sk_gonome_dmg_one_slash1", "0" };
+cvar_t	sk_gonome_dmg_one_slash2 = { "sk_gonome_dmg_one_slash2", "0" };
+cvar_t	sk_gonome_dmg_one_slash3 = { "sk_gonome_dmg_one_slash3", "0" };
+
+cvar_t	sk_gonome_dmg_guts1 = { "sk_gonome_dmg_guts1", "0" };
+cvar_t	sk_gonome_dmg_guts2 = { "sk_gonome_dmg_guts2", "0" };
+cvar_t	sk_gonome_dmg_guts3 = { "sk_gonome_dmg_guts3", "0" };
+
+cvar_t	sk_gonome_dmg_one_bite1 = { "sk_gonome_dmg_one_bite1", "0" };
+cvar_t	sk_gonome_dmg_one_bite2 = { "sk_gonome_dmg_one_bite2", "0" };
+cvar_t	sk_gonome_dmg_one_bite3 = { "sk_gonome_dmg_one_bite3", "0" };
+
+// Shock Roach
+cvar_t	sk_shockroach_health1 = { "sk_shockroach_health1", "0" };
+cvar_t	sk_shockroach_health2 = { "sk_shockroach_health2", "0" };
+cvar_t	sk_shockroach_health3 = { "sk_shockroach_health3", "0" };
+
+cvar_t	sk_shockroach_dmg_bite1 = { "sk_shockroach_dmg_bite1", "0" };
+cvar_t	sk_shockroach_dmg_bite2 = { "sk_shockroach_dmg_bite2", "0" };
+cvar_t	sk_shockroach_dmg_bite3 = { "sk_shockroach_dmg_bite3", "0" };
+
+cvar_t	sk_shockroach_lifespan1 = { "sk_shockroach_lifespan1", "0" };
+cvar_t	sk_shockroach_lifespan2 = { "sk_shockroach_lifespan2", "0" };
+cvar_t	sk_shockroach_lifespan3 = { "sk_shockroach_lifespan3", "0" };
+// OPFOR END
+
+
 // Register your console variables here
 // This gets called one time when the game is initialied
 void GameDLLInit( void )
@@ -476,6 +700,7 @@ void GameDLLInit( void )
 	CVAR_REGISTER( &weaponstay );
 	CVAR_REGISTER( &selfgauss );
 	CVAR_REGISTER( &satchelfix );
+	CVAR_REGISTER( &tripminefix );
 	CVAR_REGISTER( &forcerespawn );
 	CVAR_REGISTER( &flashlight );
 	CVAR_REGISTER( &aimcrosshair );
@@ -794,6 +1019,11 @@ void GameDLLInit( void )
 	CVAR_REGISTER( &sk_9mm_bullet2 );// {"sk_9mm_bullet2","0"};
 	CVAR_REGISTER( &sk_9mm_bullet3 );// {"sk_9mm_bullet3","0"};
 
+	// Sniper Rifle
+        CVAR_REGISTER( &sk_plr_762_bullet1 );// { "sk_plr_762_bullet1", "0" };
+        CVAR_REGISTER( &sk_plr_762_bullet2 );// { "sk_plr_762_bullet2", "0" };
+        CVAR_REGISTER( &sk_plr_762_bullet3 );// { "sk_plr_762_bullet3", "0" };
+
 	// HORNET
 	CVAR_REGISTER( &sk_hornet_dmg1 );// {"sk_hornet_dmg1","0"};
 	CVAR_REGISTER( &sk_hornet_dmg2 );// {"sk_hornet_dmg2","0"};
@@ -861,6 +1091,226 @@ void GameDLLInit( void )
 	CVAR_REGISTER( &sk_player_leg1 );
 	CVAR_REGISTER( &sk_player_leg2 );
 	CVAR_REGISTER( &sk_player_leg3 );
+
+// OPFOR
+// Otis
+	CVAR_REGISTER( &sk_otis_health1 );// {"sk_otis_health1","0"};
+	CVAR_REGISTER( &sk_otis_health2 );// {"sk_otis_health2","0"};
+	CVAR_REGISTER( &sk_otis_health3 );// {"sk_otis_health3","0"};
+
+	// Pitdrone
+	CVAR_REGISTER( &sk_pitdrone_health1 );// { "sk_pitdrone_health1", "0" };
+	CVAR_REGISTER( &sk_pitdrone_health2 );// { "sk_pitdrone_health2", "0" };
+	CVAR_REGISTER( &sk_pitdrone_health3 );// { "sk_pitdrone_health3", "0" };
+
+	CVAR_REGISTER( &sk_pitdrone_dmg_bite1 );// { "sk_pitdrone_dmg_bite1", "0" };
+	CVAR_REGISTER( &sk_pitdrone_dmg_bite2 );// { "sk_pitdrone_dmg_bite2", "0" };
+	CVAR_REGISTER( &sk_pitdrone_dmg_bite3 );// { "sk_pitdrone_dmg_bite3", "0" };
+
+	CVAR_REGISTER( &sk_pitdrone_dmg_whip1 );// { "sk_pitdrone_dmg_whip1", "0" };
+	CVAR_REGISTER( &sk_pitdrone_dmg_whip2 );// { "sk_pitdrone_dmg_whip2", "0" };
+	CVAR_REGISTER( &sk_pitdrone_dmg_whip3 );// { "sk_pitdrone_dmg_whip3", "0" };
+
+	CVAR_REGISTER( &sk_pitdrone_dmg_spit1 );// { "sk_pitdrone_dmg_spit1", "0" };
+	CVAR_REGISTER( &sk_pitdrone_dmg_spit2 );// { "sk_pitdrone_dmg_spit2", "0" };
+	CVAR_REGISTER( &sk_pitdrone_dmg_spit3 );// { "sk_pitdrone_dmg_spit3", "0" };
+
+	// Hgrunt Ally
+	CVAR_REGISTER( &sk_hgrunt_ally_health1 );// { "sk_hgrunt_ally_health1", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_health2 );// { "sk_hgrunt_ally_health2", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_health3 );// { "sk_hgrunt_ally_health3", "0" };
+
+	CVAR_REGISTER( &sk_hgrunt_ally_kick1 );// { "sk_hgrunt_ally_kick1", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_kick2 );// { "sk_hgrunt_ally_kick2", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_kick3 );// { "sk_hgrunt_ally_kick3", "0" };
+
+	CVAR_REGISTER( &sk_hgrunt_ally_pellets1 );// { "sk_hgrunt_ally_pellets1", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_pellets2 );// { "sk_hgrunt_ally_pellets2", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_pellets3 );// { "sk_hgrunt_ally_pellets3", "0" };
+
+	CVAR_REGISTER( &sk_hgrunt_ally_gspeed1 );// { "sk_hgrunt_ally_gspeed1", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_gspeed2 );// { "sk_hgrunt_ally_gspeed2", "0" };
+	CVAR_REGISTER( &sk_hgrunt_ally_gspeed3 );// { "sk_hgrunt_ally_gspeed3", "0" };
+
+	// Medic Ally
+	CVAR_REGISTER( &sk_medic_ally_health1 );// { "sk_medic_ally_health1", "0" };
+	CVAR_REGISTER( &sk_medic_ally_health2 );// { "sk_medic_ally_health2", "0" };
+	CVAR_REGISTER( &sk_medic_ally_health3 );// { "sk_medic_ally_health3", "0" };
+
+	CVAR_REGISTER( &sk_medic_ally_kick1 );// { "sk_medic_ally_kick1", "0" };
+	CVAR_REGISTER( &sk_medic_ally_kick2 );// { "sk_medic_ally_kick2", "0" };
+	CVAR_REGISTER( &sk_medic_ally_kick3 );// { "sk_medic_ally_kick3", "0" };
+
+	CVAR_REGISTER( &sk_medic_ally_gspeed1 );// { "sk_medic_ally_gspeed1", "0" };
+	CVAR_REGISTER( &sk_medic_ally_gspeed2 );// { "sk_medic_ally_gspeed2", "0" };
+	CVAR_REGISTER( &sk_medic_ally_gspeed3 );// { "sk_medic_ally_gspeed3", "0" };
+
+	CVAR_REGISTER( &sk_medic_ally_heal1 );// { "sk_medic_ally_heal1", "0" };
+	CVAR_REGISTER( &sk_medic_ally_heal2 );// { "sk_medic_ally_heal2", "0" };
+	CVAR_REGISTER( &sk_medic_ally_heal3 );// { "sk_medic_ally_heal3", "0" };
+
+	// Torch Ally
+	CVAR_REGISTER( &sk_torch_ally_health1 );// { "sk_torch_ally_health1", "0" };
+	CVAR_REGISTER( &sk_torch_ally_health2 );// { "sk_torch_ally_health2", "0" };
+	CVAR_REGISTER( &sk_torch_ally_health3 );// { "sk_torch_ally_health3", "0" };
+
+	CVAR_REGISTER( &sk_torch_ally_kick1 );// { "sk_torch_ally_kick1", "0" };
+	CVAR_REGISTER( &sk_torch_ally_kick2 );// { "sk_torch_ally_kick2", "0" };
+	CVAR_REGISTER( &sk_torch_ally_kick3 );// { "sk_torch_ally_kick3", "0" };
+
+	CVAR_REGISTER( &sk_torch_ally_gspeed1 );// { "sk_torch_ally_gspeed1", "0" };
+	CVAR_REGISTER( &sk_torch_ally_gspeed2 );// { "sk_torch_ally_gspeed2", "0" };
+	CVAR_REGISTER( &sk_torch_ally_gspeed3 );// { "sk_torch_ally_gspeed3", "0" };
+
+	// Male Assassin 
+	CVAR_REGISTER( &sk_massassin_health1 );// { "sk_massassin_health1", "0" };
+	CVAR_REGISTER( &sk_massassin_health2 );// { "sk_massassin_health2", "0" };
+	CVAR_REGISTER( &sk_massassin_health3 );// { "sk_massassin_health3", "0" };
+
+	CVAR_REGISTER( &sk_massassin_kick1 );// { "sk_massassin_kick1", "0" };
+	CVAR_REGISTER( &sk_massassin_kick2 );// { "sk_massassin_kick2", "0" };
+	CVAR_REGISTER( &sk_massassin_kick3 );// { "sk_massassin_kick3", "0" };
+
+	CVAR_REGISTER( &sk_massassin_gspeed1 );// { "sk_massassin_gspeed1", "0" };
+	CVAR_REGISTER( &sk_massassin_gspeed2 );// { "sk_massassin_gspeed2", "0" };
+	CVAR_REGISTER( &sk_massassin_gspeed3 );// { "sk_massassin_gspeed3", "0" };
+
+	// ShockTrooper 
+	CVAR_REGISTER( &sk_shocktrooper_health1 );// { "sk_shocktrooper_health1", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_health2 );// { "sk_shocktrooper_health2", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_health3 );// { "sk_shocktrooper_health3", "0" };
+
+	CVAR_REGISTER( &sk_shocktrooper_kick1 );// { "sk_shocktrooper_kick1", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_kick2 );// { "sk_shocktrooper_kick2", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_kick3 );// { "sk_shocktrooper_kick3", "0" };
+
+	CVAR_REGISTER( &sk_shocktrooper_gspeed1 );// { "sk_shocktrooper_gspeed1", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_gspeed2 );// { "sk_shocktrooper_gspeed2", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_gspeed3 );// { "sk_shocktrooper_gspeed3", "0" };
+
+	CVAR_REGISTER( &sk_shocktrooper_maxcharge1 );// { "sk_shocktrooper_maxcharge1", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_maxcharge2 );// { "sk_shocktrooper_maxcharge2", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_maxcharge3 );// { "sk_shocktrooper_maxcharge3", "0" };
+
+	CVAR_REGISTER( &sk_shocktrooper_rchgspeed1 );// { "sk_shocktrooper_rchgspeed1", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_rchgspeed2 );// { "sk_shocktrooper_rchgspeed2", "0" };
+	CVAR_REGISTER( &sk_shocktrooper_rchgspeed3 );// { "sk_shocktrooper_rchgspeed3", "0" };
+
+	// Scientist
+	CVAR_REGISTER( &sk_cleansuit_scientist_health1 );// { "sk_cleansuit_scientist_health1", "0" };
+	CVAR_REGISTER( &sk_cleansuit_scientist_health2 );// { "sk_cleansuit_scientist_health2", "0" };
+	CVAR_REGISTER( &sk_cleansuit_scientist_health3 );// { "sk_cleansuit_scientist_health3", "0" };
+
+	CVAR_REGISTER( &sk_cleansuit_scientist_heal1 );// { "sk_cleansuit_scientist_heal1", "0" };
+	CVAR_REGISTER( &sk_cleansuit_scientist_heal2 );// { "sk_cleansuit_scientist_heal2", "0" };
+	CVAR_REGISTER( &sk_cleansuit_scientist_heal3 );// { "sk_cleansuit_scientist_heal3", "0" };
+
+	// Voltigore
+	CVAR_REGISTER( &sk_voltigore_health1 );// { "sk_voltigore_health1", "0" };
+	CVAR_REGISTER( &sk_voltigore_health2 );// { "sk_voltigore_health2", "0" };
+	CVAR_REGISTER( &sk_voltigore_health3 );// { "sk_voltigore_health3", "0" };
+
+	CVAR_REGISTER( &sk_voltigore_dmg_punch1 );// { "sk_voltigore_dmg_punch1", "0" };
+	CVAR_REGISTER( &sk_voltigore_dmg_punch2 );// { "sk_voltigore_dmg_punch2", "0" };
+	CVAR_REGISTER( &sk_voltigore_dmg_punch3 );// { "sk_voltigore_dmg_punch3", "0" };
+
+	CVAR_REGISTER( &sk_voltigore_dmg_beam1 );// { "sk_voltigore_dmg_beam1", "0" };
+	CVAR_REGISTER( &sk_voltigore_dmg_beam2 );// { "sk_voltigore_dmg_beam2", "0" };
+	CVAR_REGISTER( &sk_voltigore_dmg_beam3 );// { "sk_voltigore_dmg_beam3", "0" };
+
+	// Baby Voltigore
+	CVAR_REGISTER( &sk_babyvoltigore_health1 );// { "sk_babyvoltigore_health1", "0" };
+	CVAR_REGISTER( &sk_babyvoltigore_health2 );// { "sk_babyvoltigore_health2", "0" };
+	CVAR_REGISTER( &sk_babyvoltigore_health3 );// { "sk_babyvoltigore_health3", "0" };
+
+	CVAR_REGISTER( &sk_babyvoltigore_dmg_punch1 );// { "sk_babyvoltigore_dmg_punch1", "0" };
+	CVAR_REGISTER( &sk_babyvoltigore_dmg_punch2 );// { "sk_babyvoltigore_dmg_punch2", "0" };
+	CVAR_REGISTER( &sk_babyvoltigore_dmg_punch3 );// { "sk_babyvoltigore_dmg_punch3", "0" };
+
+	// Pitworm
+	CVAR_REGISTER( &sk_pitworm_health1 );// { "sk_pitworm_health1", "0" };
+	CVAR_REGISTER( &sk_pitworm_health2 );// { "sk_pitworm_health2", "0" };
+	CVAR_REGISTER( &sk_pitworm_health3 );// { "sk_pitworm_health3", "0" };
+
+	CVAR_REGISTER( &sk_pitworm_dmg_swipe1 );// { "sk_pitworm_dmg_swipe1", "0" };
+	CVAR_REGISTER( &sk_pitworm_dmg_swipe2 );// { "sk_pitworm_dmg_swipe2", "0" };
+	CVAR_REGISTER( &sk_pitworm_dmg_swipe3 );// { "sk_pitworm_dmg_swipe3", "0" };
+
+	CVAR_REGISTER( &sk_pitworm_dmg_beam1 );// { "sk_pitworm_dmg_beam1", "0" };
+	CVAR_REGISTER( &sk_pitworm_dmg_beam2 );// { "sk_pitworm_dmg_beam2", "0" };
+	CVAR_REGISTER( &sk_pitworm_dmg_beam3 );// { "sk_pitworm_dmg_beam3", "0" };
+
+	// Geneworm
+	CVAR_REGISTER( &sk_geneworm_health1 );// { "sk_geneworm_health1", "0" };
+	CVAR_REGISTER( &sk_geneworm_health2 );// { "sk_geneworm_health2", "0" };
+	CVAR_REGISTER( &sk_geneworm_health3 );// { "sk_geneworm_health3", "0" };
+
+	CVAR_REGISTER( &sk_geneworm_dmg_spit1 );// { "sk_geneworm_dmg_spit1", "0" };
+	CVAR_REGISTER( &sk_geneworm_dmg_spit2 );// { "sk_geneworm_dmg_spit2", "0" };
+	CVAR_REGISTER( &sk_geneworm_dmg_spit3 );// { "sk_geneworm_dmg_spit3", "0" };
+
+	CVAR_REGISTER( &sk_geneworm_dmg_hit1);// { "sk_geneworm_dmg_hit1", "0" };
+	CVAR_REGISTER( &sk_geneworm_dmg_hit2 );// { "sk_geneworm_dmg_hit2", "0" };
+	CVAR_REGISTER( &sk_geneworm_dmg_hit3 );// { "sk_geneworm_dmg_hit3", "0" };
+
+	// Zombie Barney
+	CVAR_REGISTER( &sk_zombie_barney_health1 );// { "sk_zombie_barney_health1", "0" };
+	CVAR_REGISTER( &sk_zombie_barney_health2 );// { "sk_zombie_barney_health2", "0" };
+	CVAR_REGISTER( &sk_zombie_barney_health3 );// { "sk_zombie_barney_health3", "0" };
+
+	CVAR_REGISTER( &sk_zombie_barney_dmg_one_slash1 );// { "sk_zombie_barney_dmg_one_slash1", "0" };
+	CVAR_REGISTER( &sk_zombie_barney_dmg_one_slash2 );// { "sk_zombie_barney_dmg_one_slash2", "0" };
+	CVAR_REGISTER( &sk_zombie_barney_dmg_one_slash3 );// { "sk_zombie_barney_dmg_one_slash3", "0" };
+
+	CVAR_REGISTER( &sk_zombie_barney_dmg_both_slash1 );// { "sk_zombie_barney_dmg_both_slash1", "0" };
+	CVAR_REGISTER( &sk_zombie_barney_dmg_both_slash2 );// { "sk_zombie_barney_dmg_both_slash2", "0" };
+	CVAR_REGISTER( &sk_zombie_barney_dmg_both_slash3 );// { "sk_zombie_barney_dmg_both_slash3", "0" };
+
+	// Zombie Soldier
+	CVAR_REGISTER( &sk_zombie_soldier_health1 );// { "sk_zombie_soldier_health1", "0" };
+	CVAR_REGISTER( &sk_zombie_soldier_health2 );// { "sk_zombie_soldier_health2", "0" };
+	CVAR_REGISTER( &sk_zombie_soldier_health3 );// { "sk_zombie_soldier_health3", "0" };
+
+	CVAR_REGISTER( &sk_zombie_soldier_dmg_one_slash1 );// { "sk_zombie_soldier_dmg_one_slash1", "0" };
+	CVAR_REGISTER( &sk_zombie_soldier_dmg_one_slash2 );// { "sk_zombie_soldier_dmg_one_slash2", "0" };
+	CVAR_REGISTER( &sk_zombie_soldier_dmg_one_slash3 );// { "sk_zombie_soldier_dmg_one_slash3", "0" };
+
+	CVAR_REGISTER( &sk_zombie_soldier_dmg_both_slash1 );// { "sk_zombie_soldier_dmg_both_slash1", "0" };
+	CVAR_REGISTER( &sk_zombie_soldier_dmg_both_slash2 );// { "sk_zombie_soldier_dmg_both_slash2", "0" };
+	CVAR_REGISTER( &sk_zombie_soldier_dmg_both_slash3 );// { "sk_zombie_soldier_dmg_both_slash3", "0" };
+
+	// Gonome
+	CVAR_REGISTER( &sk_gonome_health1 );// { "sk_gonome_health1", "0" };
+	CVAR_REGISTER( &sk_gonome_health2 );// { "sk_gonome_health2", "0" };
+	CVAR_REGISTER( &sk_gonome_health3 );// { "sk_gonome_health3", "0" };
+
+	CVAR_REGISTER( &sk_gonome_dmg_one_slash1 );// { "sk_gonome_dmg_one_slash1", "0" };
+	CVAR_REGISTER( &sk_gonome_dmg_one_slash2 );// { "sk_gonome_dmg_one_slash2", "0" };
+	CVAR_REGISTER( &sk_gonome_dmg_one_slash3 );// { "sk_gonome_dmg_one_slash3", "0" };
+
+	CVAR_REGISTER( &sk_gonome_dmg_guts1 );// { "sk_gonome_dmg_guts1", "0" };
+	CVAR_REGISTER( &sk_gonome_dmg_guts2 );// { "sk_gonome_dmg_guts2", "0" };
+	CVAR_REGISTER( &sk_gonome_dmg_guts3 );// { "sk_gonome_dmg_guts3", "0" };
+
+	CVAR_REGISTER( &sk_gonome_dmg_one_bite1 );// { "sk_gonome_dmg_one_bite1", "0" };
+	CVAR_REGISTER( &sk_gonome_dmg_one_bite2 );// { "sk_gonome_dmg_one_bite2", "0" };
+	CVAR_REGISTER( &sk_gonome_dmg_one_bite3 );// { "sk_gonome_dmg_one_bite3", "0" };
+
+	// Shock Roach
+	CVAR_REGISTER( &sk_shockroach_health1 );// { "sk_shockroach_health1", "0" };
+	CVAR_REGISTER( &sk_shockroach_health2 );// { "sk_shockroach_health2", "0" };
+	CVAR_REGISTER( &sk_shockroach_health3 );// { "sk_shockroach_health3", "0" };
+
+	CVAR_REGISTER( &sk_shockroach_dmg_bite1 );// { "sk_shockroach_dmg_bite1", "0" };
+	CVAR_REGISTER( &sk_shockroach_dmg_bite2 );// { "sk_shockroach_dmg_bite2", "0" };
+	CVAR_REGISTER( &sk_shockroach_dmg_bite3 );// { "sk_shockroach_dmg_bite3", "0" };
+
+	CVAR_REGISTER( &sk_shockroach_lifespan1 );// { "sk_shockroach_lifespan1", "0" };
+	CVAR_REGISTER( &sk_shockroach_lifespan2 );// { "sk_shockroach_lifespan2", "0" };
+	CVAR_REGISTER( &sk_shockroach_lifespan3 );// { "sk_shockroach_lifespan3", "0" };
+// OPFOR END
+
+
 // END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	SERVER_COMMAND( "exec skill.cfg\n" );

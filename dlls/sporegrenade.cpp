@@ -292,7 +292,10 @@ void CSpore::Explode( void )
 
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 0.3;
+	if( m_pSprite )
+	{
+		UTIL_Remove( m_pSprite );
+		m_pSprite = NULL;
+	}
 	UTIL_Remove ( this );
-	UTIL_Remove( m_pSprite );
-	m_pSprite = NULL;
 }

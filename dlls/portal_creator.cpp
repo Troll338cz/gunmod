@@ -227,8 +227,7 @@ void CPortalCreator::Touch(CBaseEntity *pOther)
 
 	CBaseEntity *owner = CBaseEntity::Instance(pev->owner);
 
-	if( !pOther->IsBSPModel() ||
-			!TestSurface(vecSrc, aimAngles, tr.vecPlaneNormal, pOther) )
+	if( !pOther->IsBSPModel() || !TestSurface(vecSrc, aimAngles, tr.vecPlaneNormal, pOther) )
 	{
 		OpenError();
 		return;
@@ -248,6 +247,16 @@ void CPortalCreator::Touch(CBaseEntity *pOther)
 	pev->nextthink = gpGlobals->time;
 }
 
+void CPortalCreator::ClosePortals(edict_t *pevOwner)
+{
+	CBaseEntity *pObject = NULL;
+	while( ( pObject = UTIL_FindEntityByClassname(pObject, "prop_portal") ) != NULL )
+	{
+		CPortal *pPort = (CPortal*)pObject;
+		if( pevOwner == pPort->pev->owner )
+			pPort->ClosePortal();
+	}
+}
 
 void CPortalCreator::CreateEffects()
 {
@@ -257,7 +266,7 @@ void CPortalCreator::CreateEffects()
 		WRITE_SHORT( m_iTrail );        // model
 		WRITE_BYTE( 5 ); // life
 		WRITE_BYTE( 2 ); // width
-		if(m_bBlue)
+		if( m_bBlue )
 		{
 			WRITE_BYTE( 60 ); // r
 			WRITE_BYTE( 190 ); // g

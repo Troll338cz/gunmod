@@ -689,14 +689,13 @@ void CProp::CheckRotate()
 		{
 			pev->angles.y += 90;
 
-			ALERT(at_console, "setH: %f %f %f\n", pev->angles.x, pev->angles.y, pev->angles.z);
+			//ALERT(at_console, "setH: %f %f %f\n", pev->angles.x, pev->angles.y, pev->angles.z);
 
 			UTIL_SetSize(pev, minsH, maxsH);
 		}
 		else if (m_shape == SHAPE_CYL_V)
 		{
-
-			ALERT(at_console, "setV: %f %f %f\n", pev->angles.x, pev->angles.y, pev->angles.z);
+			//ALERT(at_console, "setV: %f %f %f\n", pev->angles.x, pev->angles.y, pev->angles.z);
 
 			moveupcounter = 0;
 			UTIL_PropMoveUp(pev);
@@ -1097,7 +1096,7 @@ int CProp::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flD
 
 	pev->velocity = r * flDamage / -7;
 	pev->avelocity.x = pev->avelocity.x*0.5 + RANDOM_FLOAT(100, -100);
-	ALERT(at_console, "Takedmg: %s %s %f %f\n", STRING(pevInflictor->classname), STRING(pevAttacker->classname), flDamage, pev->health );
+	//ALERT(at_console, "Takedmg: %s %s %f %f\n", STRING(pevInflictor->classname), STRING(pevAttacker->classname), flDamage, pev->health );
 
 	// now some func_breakable code
 

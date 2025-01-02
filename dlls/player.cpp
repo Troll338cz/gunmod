@@ -36,6 +36,8 @@
 #include "game.h"
 #include "pm_shared.h"
 #include "hltv.h"
+#include "BMOD_player.h"
+#include "ropes.h"
 
 // #define DUCKFIX
 
@@ -826,6 +828,8 @@ void CBasePlayer::RemoveAllItems( BOOL removeSuit )
 
 	if( satchelfix.value )
 		DeactivateSatchels( this );
+	if( tripminefix.value )
+		DeactivateTripmines( this );
 
 	UpdateClientData();
 
@@ -1115,6 +1119,7 @@ void CBasePlayer::TabulateAmmo()
 	ammo_uranium = AmmoInventory( GetAmmoIndex( "uranium" ) );
 	ammo_hornets = AmmoInventory( GetAmmoIndex( "Hornets" ) );
 	ammo_556 = AmmoInventory( GetAmmoIndex( "556" ) );
+	ammo_762 = AmmoInventory( GetAmmoIndex( "762" ) );
 }
 
 /*
@@ -1401,6 +1406,7 @@ void CBasePlayer::StartDeathCam( void )
 	pev->modelindex = 0;
 }
 
+/*
 void CBasePlayer::StartObserver( Vector vecPosition, Vector vecViewAngle )
 {
 	// clear any clientside entities attached to this player
@@ -1467,6 +1473,7 @@ void CBasePlayer::StartObserver( Vector vecPosition, Vector vecViewAngle )
 	m_flNextObserverInput = 0;
 	Observer_SetMode( m_iObserverLastMode );
 }
+*/
 
 //
 // PlayerUse - handles USE keypress
@@ -1475,7 +1482,7 @@ void CBasePlayer::StartObserver( Vector vecPosition, Vector vecViewAngle )
 
 void CBasePlayer::PlayerUse( void )
 {
-	if( IsObserver() )
+	if( IsObserver() || (m_ggm.iState == STATE_SPECTATOR || m_ggm.iState == STATE_SPECTATOR_BEGIN) ) // Troll: No spectators or unconnected
 		return;
 
 	// Was use pressed or released?
@@ -1684,11 +1691,9 @@ void CBasePlayer::AddPoints( int score, BOOL bAllowNegativeScore )
 	}
 
 	pev->frags += score;
-	if( pev->frags < -50 )
+	if( pev->frags < -50 && !(this->m_gm.bAdmin) )
 	{
-		char cmd[10] = {};
-		snprintf( cmd, 10, "kick %d\n", ENTINDEX(pev->pContainingEntity) - 1 );
-		SERVER_COMMAND( cmd );
+		GM_KickPlayer(this, "noob");
 		pev->frags = 0;
 	}
 
@@ -1724,6 +1729,20 @@ void CBasePlayer::InitStatusBar()
 {
 	m_flStatusBarDisappearDelay = 0;
 	m_SbarString1[0] = m_SbarString0[0] = 0; 
+}
+
+void CBasePlayer::LetGoRope()
+{
+	//Let go of the rope, detach. - Solokiller
+	pev->movetype = MOVETYPE_WALK;
+	pev->solid = SOLID_SLIDEBOX;
+	m_afPhysicsFlags &= ~PFLAG_ONROPE;
+	if (m_pRope)
+	{
+		m_pRope->DetachObject();
+		m_pRope = NULL;
+	}
+	m_bIsClimbing = false;
 }
 
 void CBasePlayer::UpdateStatusBar()
@@ -1857,8 +1876,8 @@ void CBasePlayer::PreThink( void )
 	if( IsObserver() )
 	{
 		Observer_HandleButtons();
-		Observer_CheckTarget();
-		Observer_CheckProperties();
+		//Observer_CheckTarget();
+		//Observer_CheckProperties();
 		pev->impulse = 0;
 		return;
 	}
@@ -1875,6 +1894,120 @@ void CBasePlayer::PreThink( void )
 		pev->flags |= FL_ONTRAIN;
 	else 
 		pev->flags &= ~FL_ONTRAIN;
+
+	//We're on a rope. - Solokiller
+	if( (m_afPhysicsFlags & PFLAG_ONROPE) && m_pRope )
+	{
+		pev->velocity = g_vecZero;
+
+		Vector vecAttachPos = m_pRope->GetAttachedObjectsPosition();
+
+		pev->origin = vecAttachPos;
+
+		Vector vecForce;
+
+		/*
+		//This causes sideways acceleration that doesn't occur in Op4. - Solokiller
+		if( pev->button & IN_DUCK )
+		{
+			vecForce.x = gpGlobals->v_right.x;
+			vecForce.y = gpGlobals->v_right.y;
+			vecForce.z = 0;
+			m_pRope->ApplyForceFromPlayer( vecForce );
+		}
+		if( pev->button & IN_JUMP )
+		{
+			vecForce.x = -gpGlobals->v_right.x;
+			vecForce.y = -gpGlobals->v_right.y;
+			vecForce.z = 0;
+			m_pRope->ApplyForceFromPlayer( vecForce );
+		}
+		*/
+
+		//Determine if any force should be applied to the rope, or if we should move around. - Solokiller
+		if( pev->button & ( IN_BACK | IN_FORWARD ) )
+		{
+			if( ( gpGlobals->v_forward.x * gpGlobals->v_forward.x +
+				gpGlobals->v_forward.y * gpGlobals->v_forward.y -
+				gpGlobals->v_forward.z * gpGlobals->v_forward.z ) <= 0.0 )
+			{
+				if( m_bIsClimbing )
+				{
+					const float flDelta = gpGlobals->time - m_flLastClimbTime;
+					m_flLastClimbTime = gpGlobals->time;
+					if( pev->button & IN_FORWARD )
+					{
+						if( gpGlobals->v_forward.z < 0.0 )
+						{
+							if( !m_pRope->MoveDown( flDelta ) )
+							{
+								//Let go of the rope, detach. - Solokiller
+								LetGoRope();
+							}
+						}
+						else
+						{
+							m_pRope->MoveUp( flDelta );
+						}
+					}
+					if( pev->button & IN_BACK )
+					{
+						if( gpGlobals->v_forward.z < 0.0 )
+						{
+							m_pRope->MoveUp( flDelta );
+						}
+						else if( !m_pRope->MoveDown( flDelta ) )
+						{
+							//Let go of the rope, detach. - Solokiller
+							LetGoRope();
+						}
+					}
+				}
+				else
+				{
+					m_bIsClimbing = true;
+					m_flLastClimbTime = gpGlobals->time;
+				}
+			}
+			else
+			{
+				vecForce.x = gpGlobals->v_forward.x;
+				vecForce.y = gpGlobals->v_forward.y;
+				vecForce.z = 0.0;
+				if( pev->button & IN_BACK )
+				{
+					vecForce.x = -gpGlobals->v_forward.x;
+					vecForce.y = -gpGlobals->v_forward.y;
+					vecForce.z = 0;
+				}
+				m_pRope->ApplyForceFromPlayer( vecForce );
+				m_bIsClimbing = false;
+			}
+		}
+		else
+		{
+			m_bIsClimbing = false;
+		}
+
+		if( m_afButtonPressed & IN_JUMP )
+		{
+			//We've jumped off the rope, give us some momentum - Solokiller
+			CRope* rope = m_pRope;
+			LetGoRope();
+
+			Vector vecDir = gpGlobals->v_up * 165.0 + gpGlobals->v_forward * 150.0;
+
+			Vector vecVelocity = rope->GetAttachedObjectsVelocity() * 2;
+
+			vecVelocity = vecVelocity.Normalize();
+
+			vecVelocity = vecVelocity * 200;
+
+			pev->velocity = vecVelocity + vecDir;
+		}
+		return;
+	}
+
 
 	// Train speed control
 	if( m_afPhysicsFlags & PFLAG_ONTRAIN )
@@ -3012,7 +3145,13 @@ void CBasePlayer::Spawn( void )
 
 	if( mp_santahat.value && !m_santaHat )
 		m_santaHat = CSantaHat::CreateSantaHat(this);
-	
+
+	// Troll: update m_gm struct on spawn
+	if( GM_IsAdmin( this->edict() ) )
+		this->m_gm.bAdmin = TRUE;
+	else
+		this->m_gm.bAdmin = FALSE; // Default, force set anyway
+
 	g_pGameRules->PlayerSpawn( this );
 	g_flSemclipTime = 0;
 }
@@ -3223,6 +3362,9 @@ void CBasePlayer::SelectItem( const char *pstr )
 	if( pItem == m_pActiveItem )
 		return;
 
+	if( !pItem->CanDeploy())
+		return;
+
 	ResetAutoaim();
 
 	// FIX, this needs to queue them up and delay
@@ -3234,7 +3376,9 @@ void CBasePlayer::SelectItem( const char *pstr )
 
 	if( m_pActiveItem )
 	{
+		m_pActiveItem->pev->oldbuttons = 1;
 		m_pActiveItem->Deploy();
+		m_pActiveItem->pev->oldbuttons = 0;
 		m_pActiveItem->UpdateItemInfo();
 	}
 }
@@ -3251,6 +3395,9 @@ void CBasePlayer::SelectLastItem( void )
 		return;
 	}
 
+	if( !m_pLastItem->CanDeploy())
+		return;
+
 	ResetAutoaim();
 
 	// FIX, this needs to queue them up and delay
@@ -3260,9 +3407,14 @@ void CBasePlayer::SelectLastItem( void )
 	CBasePlayerItem *pTemp = m_pActiveItem;
 	m_pActiveItem = m_pLastItem;
 	m_pLastItem = pTemp;
+
+	m_pActiveItem->pev->oldbuttons = 1;
 	m_pActiveItem->Deploy();
+	m_pActiveItem->pev->oldbuttons = 0;
+
 	m_pActiveItem->UpdateItemInfo();
 }
+
 
 //==============================================
 // HasWeapons - do I have any weapons at all?
@@ -3610,7 +3762,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "ammo_ARgrenades" );
 		GiveNamedItem( "weapon_handgrenade" );
 		GiveNamedItem( "weapon_tripmine" );
-#ifndef OEM_BUILD
+
 		GiveNamedItem( "weapon_357" );
 		GiveNamedItem( "ammo_357" );
 		GiveNamedItem( "weapon_crossbow" );
@@ -3623,7 +3775,27 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_satchel" );
 		GiveNamedItem( "weapon_snark" );
 		GiveNamedItem( "weapon_hornetgun" );
-#endif
+
+		if ( mp_gunmod.value )
+		{
+			GiveNamedItem( "weapon_gravgun" );
+			GiveNamedItem( "weapon_ar2" );
+			GiveNamedItem( "ammo_ar2_altfire" );
+			GiveNamedItem( "weapon_big_cock" );
+			GiveNamedItem( "ammo_cockclip" );
+			GiveNamedItem( "weapon_sniperrifle" );
+			GiveNamedItem( "ammo_762" );
+			GiveNamedItem( "weapon_m249" );
+			GiveNamedItem( "ammo_556" );
+			GiveNamedItem( "weapon_shockrifle" );
+			GiveNamedItem( "weapon_displacer" );
+			GiveNamedItem( "ammo_gaussclip" );
+			GiveNamedItem( "weapon_grapple" );
+			GiveNamedItem( "weapon_sporelauncher" );
+			GiveNamedItem( "weapon_portalgun" );
+			GiveNamedItem( "weapon_knife" );
+			//GiveNamedItem( "weapon_gateofbabylon" );
+		}
 		gEvilImpulse101 = FALSE;
 		break;
 	case 102:

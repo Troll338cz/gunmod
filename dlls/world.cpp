@@ -460,7 +460,26 @@ void CWorld::Spawn( void )
 {
 	g_fGameOver = FALSE;
 	Precache();
+	pev->nextthink = gpGlobals->time + 120;
 }
+
+void CWorld::Think( void )
+{
+	// Scan the world for old ents
+	CBaseEntity *RemoveCrap = NULL;
+	while( ( RemoveCrap = UTIL_FindEntityInSphere( RemoveCrap, Vector(0, 0, 0), 8192 ) ) != NULL )
+	{
+		//  Gravgun can suspend projectiles midair, cleanup here.
+		if( FClassnameIs( RemoveCrap->pev, "grenade" ) 
+		||  FClassnameIs( RemoveCrap->pev, "rpg_rocket" ))
+		{
+			UTIL_Remove( RemoveCrap );
+		}
+	}
+
+	pev->nextthink = gpGlobals->time + 120;
+}
+
 
 void CWorld::Precache( void )
 {

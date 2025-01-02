@@ -165,7 +165,6 @@ void CM249::PrimaryAttack()
 	Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_5DEGREES);
 	Vector vecDir;
 
-
 	// optimized multiplayer. Widened to make it easier to hit a moving player
 	vecDir = m_pPlayer->FireBulletsPlayer(4, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 0, 3, m_pPlayer->pev, m_pPlayer->random_seed);
 
@@ -236,7 +235,7 @@ void CM249::WeaponIdle(void)
 
 	SendWeaponAnim(iAnim);
 
-	m_flTimeWeaponIdle = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15); // how long till we do this again.
+	m_flTimeWeaponIdle = gpGlobals->time + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15); // how long till we do this again.
 }
 
 

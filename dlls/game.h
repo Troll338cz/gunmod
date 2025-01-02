@@ -29,6 +29,7 @@ extern cvar_t falldamage;
 extern cvar_t weaponstay;
 extern cvar_t selfgauss;
 extern cvar_t satchelfix;
+extern cvar_t tripminefix;
 extern cvar_t forcerespawn;
 extern cvar_t flashlight;
 extern cvar_t aimcrosshair;

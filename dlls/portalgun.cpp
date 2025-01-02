@@ -85,7 +85,7 @@ int CPortalGun::GetItemInfo( ItemInfo *p )
 	p->iMaxAmmo2 = WEAPON_NOCLIP;
 	p->iMaxClip = WEAPON_NOCLIP;
 	p->iSlot = 0;
-	p->iPosition = 1;
+	p->iPosition = 4;
 	p->iId = WEAPON_PORTALGUN;
 	p->iWeight = 11;
 	p->iFlags = 0;
@@ -100,6 +100,7 @@ BOOL CPortalGun::Deploy()
 void CPortalGun::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.01;
+	CPortalCreator::ClosePortals( m_pPlayer->edict() );
 	//SendWeaponAnim( PORTALGUN_HOLSTER );
 }
 
@@ -179,7 +180,7 @@ void CPortalGun::SecondaryAttack()
 
 void CPortalGun::Reload( void )
 {
-
+	;
 }
 
 void CPortalGun::WeaponIdle( void )
