@@ -202,11 +202,11 @@ void CBasePlayer::Observer_FindNextPlayer( bool bReverse )
 		UTIL_SetOrigin( pev, m_hObserverTarget->pev->origin );
 		
 		// ClientPrint( pev, HUD_PRINTCENTER, UTIL_VarArgs ("Chase Camera: %s\n", STRING( m_hObserverTarget->pev->netname ) ) );
-		ALERT( at_console, "Now Tracking %s\n", STRING( m_hObserverTarget->pev->netname ) );
+		// ALERT( at_console, "Now Tracking %s\n", STRING( m_hObserverTarget->pev->netname ) );
 	}
 	else
 	{
-		ALERT( at_console, "No observer targets.\n" );
+		// ALERT( at_console, "No observer targets.\n" );
 	}
 }
 
