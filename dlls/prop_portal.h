@@ -13,7 +13,8 @@ public:
 	void ClosePortal();
 
 	void PortalTouch(CBaseEntity *pOther);
-	void PortalDebug();
+	//void PortalDebug();
+	CBaseEntity *ReturnOppositePortal();
 
 	BOOL m_bBlue = FALSE;
 	int m_spriteTexture;

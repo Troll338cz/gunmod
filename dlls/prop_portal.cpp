@@ -50,8 +50,8 @@ void CPortal::Spawn(void)
 	}
 	UTIL_SetOrigin(pev, pev->origin);
 	SetTouch(&CPortal::PortalTouch);
-	SetThink(&CPortal::PortalDebug);
-	pev->nextthink = gpGlobals->time + 0.1;
+//	SetThink(&CPortal::PortalDebug);
+//	pev->nextthink = gpGlobals->time + 0.1;
 }
 
 void CPortal::Precache()
@@ -173,6 +173,50 @@ Vector AngleToDirection(Vector angle) {
 	return direction;
 }
 
+BOOL VerifyTeleport( Vector center )
+{
+	//Vector DebugRed 	= {255,0,0};
+	//Vector DebugGreen 	= {0,255,0};
+	TraceResult tr_t;
+	TraceResult tr_b;
+	Vector tr_top 		= center + Vector(0,0,1) * 32;
+	Vector tr_bottom 	= center - Vector(0,0,1) * 32;
+	UTIL_TraceLine( tr_top, center,  dont_ignore_monsters, NULL, &tr_t );
+	UTIL_TraceLine( tr_bottom,center,  dont_ignore_monsters, NULL, &tr_b );
+
+	if( tr_t.fAllSolid == 0 && tr_t.fStartSolid == 0 )
+	{
+		//DrawDebugLaser( center, tr_top, DebugGreen );
+	}
+	else
+	{
+		//DrawDebugLaser( center, tr_top, DebugRed );
+		return false;
+	}
+	if( tr_b.fAllSolid == 0 && tr_b.fStartSolid == 0  )
+	{
+		//DrawDebugLaser( center, tr_bottom, DebugGreen );
+	}
+	else
+	{
+		//DrawDebugLaser( center, tr_bottom, DebugRed );
+		return false;
+	}
+	return true;
+}
+
+CBaseEntity *CPortal::ReturnOppositePortal()
+{
+	CBaseEntity *pObject = NULL;
+
+	while( ( pObject = UTIL_FindEntityByClassname(pObject, "prop_portal") ) != NULL )
+	{
+		CPortal *pPort = (CPortal*)pObject;
+		if( this->pev->owner == pPort->pev->owner && pPort->m_bBlue == !m_bBlue)
+			return pObject;
+	}
+	return NULL;
+}
 
 void CPortal::PortalTouch(CBaseEntity *pOther)
 {
@@ -180,45 +224,24 @@ void CPortal::PortalTouch(CBaseEntity *pOther)
 	if( FClassnameIs( pOther->pev, "prop_portal" )  || FClassnameIs( pOther->pev, "worldspawn" )  )
 		return;
 
+	CBaseEntity *PortalLink = ReturnOppositePortal();
+	if( PortalLink == NULL || !UTIL_IsValidEntity(PortalLink->edict()) )
+		return;
+
 	if( pOther->IsPlayer() )
 	{
-		Vector anglez = AngleToDirection(this->pev->angles);
-		pOther->pev->velocity = pOther->pev->velocity + anglez * 128;
+		Vector anglez = AngleToDirection(PortalLink->pev->angles);
+		Vector linkorigin = PortalLink->pev->origin + anglez * 80;
+		if( VerifyTeleport(linkorigin) && ( PortalLink->pev->origin.x != 0 || PortalLink->pev->origin.y != 0 || PortalLink->pev->origin.z != 0 ) );
+		{
+			float flZVel = pOther->pev->velocity.z;
+			pOther->pev->velocity = pOther->pev->velocity + anglez * 200;
+			pOther->pev->velocity.z = -flZVel;
+			pOther->pev->origin = PortalLink->pev->origin + anglez * 80;
+		}
 	}
 }
-
-BOOL VerifyTeleport( Vector center )
-{
-	Vector DebugRed 	= {255,0,0};
-	Vector DebugGreen 	= {0,255,0};
-	TraceResult tr_t;
-	TraceResult tr_b;
-	Vector tr_top 		= center + Vector(0,0,1) * 32;
-	Vector tr_bottom 	= center - Vector(0,0,1) * 32;
-	UTIL_TraceLine( tr_top, center,  dont_ignore_monsters, NULL, &tr_t );
-	UTIL_TraceLine( tr_bottom,center,  dont_ignore_monsters, NULL, &tr_b );
-	BOOL IsInvalid = true;
-	if( tr_t.fAllSolid == 0 && tr_t.fStartSolid == 0 )
-	{
-		DrawDebugLaser( center, tr_top, DebugGreen );
-	}
-	else
-	{
-		DrawDebugLaser( center, tr_top, DebugRed );
-		IsInvalid = false;
-	}
-	if( tr_b.fAllSolid == 0 && tr_b.fStartSolid == 0  )
-	{
-		DrawDebugLaser( center, tr_bottom, DebugGreen );
-	}
-	else
-	{
-		DrawDebugLaser( center, tr_bottom, DebugRed );
-		IsInvalid = false;
-	}
-	return IsInvalid;
-}
-
+/*
 void CPortal::PortalDebug()
 {
 	Vector anglez = AngleToDirection(this->pev->angles);
@@ -231,4 +254,4 @@ void CPortal::PortalDebug()
 	VerifyTeleport(angle_end);
 	pev->nextthink = gpGlobals->time + 0.1;
 }
-
+*/

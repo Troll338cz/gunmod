@@ -11,6 +11,7 @@
 #include "customweapons.h"
 #include "unpredictedweapon.h"
 #include "portal_creator.h"
+#include "prop_portal.h"
 
 enum PortalGunAnim
 {
