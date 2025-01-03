@@ -256,21 +256,22 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 	if( NextScorchMark <= gpGlobals->time )
 	{
 		UTIL_DecalTrace(&tr, DECAL_SMALLSCORCH2);
-		NextScorchMark = gpGlobals->time + 0.05;	
-	}
 
-	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
-		WRITE_BYTE(TE_DLIGHT);
-		WRITE_COORD(tr.vecEndPos.x);	// X
-		WRITE_COORD(tr.vecEndPos.y);	// Y
-		WRITE_COORD(tr.vecEndPos.z);	// Z
-		WRITE_BYTE( 5 );		// radius * 0.1
-		WRITE_BYTE( 70 );		// r
-		WRITE_BYTE( 155 );		// g
-		WRITE_BYTE( 255 );		// b
-		WRITE_BYTE( 5 );		// time * 10
-		WRITE_BYTE( 5 );		// decay * 0.1
-	MESSAGE_END( );
+		MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
+			WRITE_BYTE(TE_DLIGHT);
+			WRITE_COORD(tr.vecEndPos.x);	// X
+			WRITE_COORD(tr.vecEndPos.y);	// Y
+			WRITE_COORD(tr.vecEndPos.z);	// Z
+			WRITE_BYTE( 5 );		// radius * 0.1
+			WRITE_BYTE( 70 );		// r
+			WRITE_BYTE( 155 );		// g
+			WRITE_BYTE( 255 );		// b
+			WRITE_BYTE( 5 );		// time * 10
+			WRITE_BYTE( 5 );		// decay * 0.1
+		MESSAGE_END( );
+
+		NextScorchMark = gpGlobals->time + 0.05;
+	}
 
 #ifndef CLIENT_DLL
 	CBaseEntity *pEntity = CBaseEntity::Instance( tr.pHit );
