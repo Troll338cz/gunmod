@@ -226,7 +226,7 @@ void KickCheater( CBasePlayer *player, const char *CheatType )
 	FILE *flch;
 	flch = fopen("Cheaters.txt", "a");
 	fprintf( flch , "name: %s id: %s %s\n", GGM_PlayerName(player), GETPLAYERAUTHID(player->edict()), CheatType);
-	SERVER_COMMAND(UTIL_VarArgs("kick #%i cheater\n", GETPLAYERUSERID(player->edict()) ));
+	GM_KickPlayer( player, "Skill issue" );
 	fclose( flch );
 }
 
@@ -452,7 +452,7 @@ void Host_Say( edict_t *pEntity, int teamonly )
 	strcat( text, "\n" );
 
 	// Troll: No delay for admins
-	if( !(player->m_gm.IsAdmin()) )
+	if( !player->m_gm.IsAdmin() )
 		player->m_flNextChatTime = gpGlobals->time + CHAT_INTERVAL;
 
 	// loop through all players
@@ -509,18 +509,19 @@ void Host_Say( edict_t *pEntity, int teamonly )
 		WRITE_BYTE( ENTINDEX(pEntity) );
 		WRITE_STRING( text );
 	MESSAGE_END();
-	GM_ChatLog( pEntity, text );
 	// echo to server console
 	g_engfuncs.pfnServerPrint( text );
+
+	if( adminsonly )
+		return;
+
+	GM_ChatLog( pEntity, text );
 
 	const char *temp;
 	if( teamonly )
 		temp = "say_team";
 	else
 		temp = "say";
-	
-	if( adminsonly )
-		return;
 
 	// team match?
 	if ( g_teamplay )
@@ -659,13 +660,13 @@ void ClientCommand( edict_t *pEntity )
 	{
 		pPlayer->SelectLastItem();
 	}
-	/*else if( FStrEq( pcmd, "specmode" ) ) // new spectator mode
+	else if( FStrEq( pcmd, "specmode" ) ) // new spectator mode
 	{
 		CBasePlayer *pPlayer = GetClassPtr( (CBasePlayer *)pev );
 
 		if( pPlayer->IsObserver() )
 			pPlayer->Observer_SetMode( atoi( CMD_ARGV( 1 ) ) );
-	}*/
+	}
 	else if( FStrEq( pcmd, "spectate" ) ) // clients wants to become a spectator
 	{
 

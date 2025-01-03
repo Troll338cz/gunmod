@@ -704,9 +704,7 @@ void CHalfLifeMultiplay::PlayerKilled( CBasePlayer *pVictim, entvars_t *pKiller,
 			pKiller->frags += IPointsForKill( peKiller, pVictim );
 		if( pKiller->frags < -50 )
 		{
-			char cmd[10] = {};
-			snprintf( cmd, 10, "kick %d\n", ENTINDEX(pKiller->pContainingEntity) - 1 );
-			SERVER_COMMAND( cmd );
+			GM_KickPlayer( peKiller, "-50" );
 		}
 
 		FireTargets( "game_playerkill", ktmp, ktmp, USE_TOGGLE, 0 );

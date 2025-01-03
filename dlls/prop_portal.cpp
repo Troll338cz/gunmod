@@ -22,7 +22,7 @@ void CPortal::Spawn(void)
 	Precache();
 
 	SET_MODEL(ENT(pev), "models/portal.mdl");
-//	UTIL_SetSize(pev, Vector(-8, -23, -36),  Vector(8, 23, 36));
+	UTIL_SetSize(pev, Vector(-8, -23, -36),  Vector(8, 23, 36));
 
 	pev->movetype = MOVETYPE_NONE;
 	pev->solid = SOLID_TRIGGER; // SOLID_BBOX

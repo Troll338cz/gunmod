@@ -327,7 +327,7 @@ const char *GGM_PlayerName( CBaseEntity *pPlayer )
 =====================
 GGM_TempBan
 
-Mark player as temprary banned and kick from server
+Mark player as temporary banned and kick from server
 This bans player from votes and changelevel activation
 =====================
 */
@@ -343,7 +343,7 @@ void GGM_TempBan( CBaseEntity *pEnt )
 
 	pPlayer->m_ggm.pState->t.fIsTempBanned = true;
 
-	SERVER_COMMAND( UTIL_VarArgs( "kick #%d\n", GETPLAYERUSERID( pPlayer->edict() ) ) );
+	GM_KickPlayer( pPlayer, "Banned by vote." );
 }
 
 /*
@@ -1431,19 +1431,21 @@ struct GGMPlayerState *GGM_GetState( const char *uid, const char *name )
 {
 	struct GGMPlayerState *pState;
 	struct GGMLogin *pLogin = GGM_LoadLogin( uid, name );
-	char *rgpszBadNames[] = {
-	"player*", // does not even can set own name
-	"*talat*",
-	"*hmse*",
-	"*mhmd*",
-	"*aeman*",
-	"*famas*",
-	"*danek*",
-	"ame syia*",
-	"*melih*",
-	"*aliance*",
-	"*alliance*",
-	"*vladick*",
+	const char *rgpszBadNames[] = {
+		"player*", // does not even can set own name
+		"*talat*",
+		"*hmse*",
+		"*mhmd*",
+		"*aeman*",
+		"*famas*",
+		"*danek*",
+		"ame syia*",
+		"*melih*",
+		"*aliance*",
+		"*alliance*",
+		"*Newbie*",
+		"*src gamer*",
+		"pao",
 	};
 
 	if( pLogin )
