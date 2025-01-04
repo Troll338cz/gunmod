@@ -350,7 +350,7 @@ BOOL CFuncTank::StartControl( CBasePlayer *pController )
 			return FALSE;
 	}
 
-	ALERT( at_console, "using TANK!\n");
+	// ALERT( at_console, "using TANK!\n");
 
 	m_pController = pController;
 	m_pController->m_pTank = this;
@@ -380,7 +380,7 @@ void CFuncTank::StopControl()
 	if( m_pController->m_pActiveItem )
 		m_pController->m_pActiveItem->Deploy();
 
-	ALERT( at_console, "stopped using TANK\n");
+	// ALERT( at_console, "stopped using TANK\n");
 
 	m_pController->m_iHideHUD &= ~HIDEHUD_WEAPONS;
 

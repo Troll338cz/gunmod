@@ -252,3 +252,31 @@ void CSporeAmmo :: AmmoTouch ( CBaseEntity *pOther )
 		SetThink (&CSporeAmmo::IdleThink);
 	}
 }
+
+class CSporeAmmoItem : public CBasePlayerAmmo
+{
+	void Spawn( void )
+	{ 
+		Precache();
+		SET_MODEL( ENT( pev ), "models/spore.mdl" );
+		CBasePlayerAmmo::Spawn();
+	}
+
+	void Precache( void )
+	{
+		PRECACHE_MODEL( "models/spore.mdl" );
+		PRECACHE_SOUND( "items/9mmclip1.wav" );
+	}
+
+	BOOL AddAmmo( CBaseEntity *pOther )
+	{
+		if( pOther->GiveAmmo( 1, "Spores", 20) != -1 )
+		{
+			EMIT_SOUND( ENT( pev ), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM );
+			return TRUE;
+		}
+		return FALSE;
+	}
+};
+
+LINK_ENTITY_TO_CLASS( ammo_spore_item, CSporeAmmoItem )

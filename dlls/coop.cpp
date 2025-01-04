@@ -516,14 +516,14 @@ void UTIL_SpawnPlayer( CBasePlayer *pPlayer )
 	if( pPlayer->m_ggm.iState == STATE_SPECTATOR )
 		pPlayer->m_ggm.iState = STATE_SPAWNED;
 
-	pPlayer->m_iRespawnFrames = 0;
+/*	pPlayer->m_iRespawnFrames = 0;
 	pPlayer->pev->effects &= ~EF_NODRAW;
 
 	pPlayer->pev->takedamage = DAMAGE_YES;
 	pPlayer->pev->flags &= ~FL_SPECTATOR;
 	pPlayer->pev->movetype = MOVETYPE_WALK;
-	pPlayer->Spawn();
-	//pPlayer->StopObserver();
+	pPlayer->Spawn();*/
+	pPlayer->StopObserver();
 	if( mp_coop.value )
 		CLIENT_COMMAND( pPlayer->edict(), "touch_show _coopm*\n" );
 
