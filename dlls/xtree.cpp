@@ -36,12 +36,15 @@ void CXtree::LightThink()
 {
 	Vector vecSrc = pev->origin;
 	static int iColor = 0;
-	if( iColor == 3 ) iColor = 0;
-	int rgrgiColors[3][3] =
+	if( iColor == 6 ) iColor = 0;
+	int rgrgiColors[6][3] =
 	{
 			{ 255, 0, 0 },
 			{ 0, 0, 255 },
-			{ 0, 255, 0 }
+			{ 0, 255, 0 },
+			{ 0, 255, 255 },
+			{ 255, 0, 255 },
+			{ 255, 255, 0 }
 	};
 	
 	pev->rendercolor = Vector(rgrgiColors[iColor][0],rgrgiColors[iColor][1],rgrgiColors[iColor][2]);
