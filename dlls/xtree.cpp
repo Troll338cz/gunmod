@@ -46,7 +46,7 @@ void CXtree::LightThink()
 			{ 255, 0, 255 },
 			{ 255, 255, 0 }
 	};
-	
+
 	pev->rendercolor = Vector(rgrgiColors[iColor][0],rgrgiColors[iColor][1],rgrgiColors[iColor][2]);
 	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, vecSrc );
 			WRITE_BYTE( TE_DLIGHT );

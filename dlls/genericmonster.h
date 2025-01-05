@@ -17,7 +17,7 @@
 #define GENERICMONSTER_H
 
 //=========================================================
-// Generic Monster - purely for scripted sequence work.
+// Monster's Anim Events Go Here
 //=========================================================
 class CGenericMonster : public CBaseMonster
 {
@@ -28,5 +28,19 @@ public:
 	int Classify( void );
 	void HandleAnimEvent( MonsterEvent_t *pEvent );
 	int ISoundMask( void );
+	void PlayScriptedSentence( const char *pszSentence, float duration, float volume, float attenuation, BOOL bConcurrent, CBaseEntity *pListener );
+	void IdleHeadTurn( Vector &vecFriend );
+	void EXPORT MonsterThink();
+
+	int Save( CSave &save );
+	int Restore( CRestore &restore );
+	static TYPEDESCRIPTION m_SaveData[];
+
+private:
+	float m_talkTime;
+	EHANDLE m_hTalkTarget;
+	float m_flIdealYaw;
+	float m_flCurrentYaw;
 };
+
 #endif // GENERICMONSTER_H

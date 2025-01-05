@@ -222,7 +222,7 @@ void CShockrifle::PrimaryAttack()
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
 	m_flNextPrimaryAttack = gpGlobals->time + 0.33;
-	m_flNextSecondaryAttack = gpGlobals->time + 0.33;
+	m_flNextSecondaryAttack = gpGlobals->time + 0.8;
 	m_flTimeWeaponIdle = gpGlobals->time + 0.33;
 }
 

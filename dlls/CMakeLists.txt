@@ -194,6 +194,8 @@ set (SVDLL_SOURCES
 	gearbox/voltigore.cpp
 	gearbox/zombie_barney.cpp
 	gearbox/zombie_soldier.cpp
+	bshift/bshift_items.cpp
+	bshift/rosenberg.cpp
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_math.c
 	../pm_shared/pm_shared.c
