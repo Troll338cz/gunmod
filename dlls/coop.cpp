@@ -476,11 +476,6 @@ Set noclip and invisibility
 */
 void UTIL_BecomeSpectator( CBasePlayer *pPlayer )
 {
-	edict_t *pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot( pPlayer );
-	pPlayer->StartObserver( pPlayer->pev->origin, VARS( pentSpawnSpot )->angles );
-	pPlayer->m_bSentMsg = FALSE;
-/*
-	//pPlayer->m_bDoneFirstSpawn = true;
 	pPlayer->pev->takedamage = DAMAGE_NO;
 	pPlayer->pev->flags |= FL_SPECTATOR;
 	pPlayer->pev->flags |= FL_NOTARGET;
@@ -490,10 +485,6 @@ void UTIL_BecomeSpectator( CBasePlayer *pPlayer )
 	pPlayer->pev->modelindex = 0;
 	pPlayer->pev->health = 1;
 	pPlayer->m_pGoalEnt = NULL;
-	//pPlayer->StopObserver();
-	//while( !pPlayer->IsObserver() )
-		//pPlayer->StartObserver(pPlayer->pev->origin, pPlayer->pev->angles);
-*/
 	return;
 }
 
@@ -506,7 +497,6 @@ Spawn player which is marked as spectator
 */
 void UTIL_SpawnPlayer( CBasePlayer *pPlayer )
 {
-	//pPlayer->StopObserver();
 	if( pPlayer->m_ggm.iState == STATE_LOAD_FIX )
 		return;
 
@@ -516,17 +506,16 @@ void UTIL_SpawnPlayer( CBasePlayer *pPlayer )
 	if( pPlayer->m_ggm.iState == STATE_SPECTATOR )
 		pPlayer->m_ggm.iState = STATE_SPAWNED;
 
-/*	pPlayer->m_iRespawnFrames = 0;
+	pPlayer->m_iRespawnFrames = 0;
 	pPlayer->pev->effects &= ~EF_NODRAW;
 
 	pPlayer->pev->takedamage = DAMAGE_YES;
 	pPlayer->pev->flags &= ~FL_SPECTATOR;
 	pPlayer->pev->movetype = MOVETYPE_WALK;
-	pPlayer->Spawn();*/
-	pPlayer->StopObserver();
+	pPlayer->Spawn();
+
 	if( mp_coop.value )
 		CLIENT_COMMAND( pPlayer->edict(), "touch_show _coopm*\n" );
-
 }
 
 /*
