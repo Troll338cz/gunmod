@@ -83,13 +83,16 @@ void CBasePlayer::StartObserver( Vector vecPosition, Vector vecViewAngle )
 	// Setup flags
 	m_iHideHUD = (HIDEHUD_FLASHLIGHT | HIDEHUD_WEAPONS | HIDEHUD_HEALTH);
 	m_afPhysicsFlags |= PFLAG_OBSERVER;
-	pev->effects |= EF_NODRAW;
 	pev->view_ofs = g_vecZero;
 	pev->angles = pev->v_angle = vecViewAngle;
 	pev->fixangle = TRUE;
-	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
+	pev->flags |= FL_SPECTATOR;
+	pev->flags |= FL_NOTARGET;
+	pev->effects |= EF_NODRAW;
+	pev->solid = SOLID_NOT;
 	pev->movetype = MOVETYPE_NOCLIP;
+	pev->modelindex = 0;
 	ClearBits( m_afPhysicsFlags, PFLAG_DUCKING );
 	ClearBits( pev->flags, FL_DUCKING );
 	pev->deadflag = DEAD_RESPAWNABLE;
@@ -140,6 +143,10 @@ void CBasePlayer::StopObserver( void )
 		pev->iuser1 = pev->iuser2 = 0; 
 		m_hObserverTarget = NULL;
 		m_iHideHUD = 0;
+
+		pev->effects &= ~EF_NODRAW;
+		pev->takedamage = DAMAGE_YES;
+		pev->flags &= ~FL_SPECTATOR;
 
 		respawn( pev, !( m_afPhysicsFlags & PFLAG_OBSERVER ) );
 

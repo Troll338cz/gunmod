@@ -121,18 +121,15 @@ void CSparkEffects::Think( void )
 }
 
 
-const char *sparktrailtargets[] = 
+const char *ChainLightingClassnames[] = 
 {
 	"player",
 	"monster_tripmine",
 	"monster_snark",
 	"monster_satchel",
-	"monster_bloater",
 	"monster_snark",
-	"monster_rat",
 	"monster_babycrab",
 	"monster_cockroach",
-	"monster_flyer_flock",
 	"monster_headcrab",
 	"monster_leech",
 	"prop",
@@ -149,7 +146,24 @@ const char *sparktrailtargets[] =
 	"monster_bigmomma",
 	"monster_gargantua",
 	"monster_ichthyosaur",
-	"ammo_spore"
+	"ammo_spore",
+	"monster_blkop_apache",
+	"monster_blkop_osprey",
+	"monster_cleansuit_scientist",
+	"monster_drillsergeant",
+	"monster_geneworm",
+	"monster_gonome",
+	"monster_male_assassin",
+	"monster_otis",
+	"monster_penguin",
+	"monster_pitdrone",
+	"monster_pitworm",
+	"monster_recruit",
+	"monster_alien_voltigore",
+	"monster_alien_babyvoltigore,",
+	"monster_zombie_barney",
+	"monster_zombie_soldier",
+	"monster_rosenberg"
 };
 
 //=========================================================
@@ -193,9 +207,9 @@ void CSparkTrail1::Think( void )
 				break;
 			}
 	
-			for( size_t uiIndex = 0; uiIndex < ARRAYSIZE( sparktrailtargets ); ++uiIndex )
+			for( size_t uiIndex = 0; uiIndex < ARRAYSIZE( ChainLightingClassnames ); ++uiIndex )
 			{
-				if( strcmp( STRING(searchtargets->pev->classname), sparktrailtargets[ uiIndex ] ) == 0 && this->pev != searchtargets->pev )
+				if( strcmp( STRING(searchtargets->pev->classname), ChainLightingClassnames[ uiIndex ] ) == 0 )
 				{
 				        MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
 				                WRITE_BYTE( TE_BEAMPOINTS );
@@ -232,8 +246,6 @@ void CSparkTrail1::Think( void )
 
 					CBaseEntity *pLight2 = CBaseEntity::Create( "lightning2", searchtargets->pev->origin, Vector(0,0,0), NULL );
 					pLight2->pev->owner = this->pev->owner;
-
-					//printf("%s\n", STRING(searchtargets->pev->classname));
 					break;
 				}
 			}

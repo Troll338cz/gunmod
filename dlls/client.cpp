@@ -669,31 +669,39 @@ void ClientCommand( edict_t *pEntity )
 	}
 	else if( FStrEq( pcmd, "spectate" ) ) // clients wants to become a spectator
 	{
-
 		CBasePlayer *pPlayer = GetClassPtr( (CBasePlayer *)pev );
-		if( !pPlayer->IsObserver() )
+		if( mp_coop.value )
 		{
-			// always allow admins to become a spectator
-			if( ( allow_spectators.value || mp_coop.value || pPlayer->m_gm.IsAdmin() ) && (gpGlobals->time >= pPlayer->m_flLastCommandTime[0]))
-			{
-				edict_t *pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot( pPlayer );
-				pPlayer->StartObserver( pev->origin, VARS( pentSpawnSpot )->angles );
-				pPlayer->m_bSentMsg = FALSE;
-				// notify other clients of player switching to spectator mode
-				UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "%s switched to spectator mode\n",
-						( pev->netname && ( STRING( pev->netname ) )[0] != 0 ) ? STRING( pev->netname ) : "unconnected" ) );
-				pPlayer->m_flLastCommandTime[0] = gpGlobals->time + 10.0f;
-			}
-			else
-				ClientPrint( pev, HUD_PRINTCONSOLE, "Spectator mode is disabled. (Or you are spamming it)\n" );
+			pPlayer->RemoveAllItems(TRUE);
+			UTIL_BecomeSpectator(pPlayer);
+			pPlayer->m_ggm.iState = STATE_SPECTATOR;
 		}
 		else
 		{
-			pPlayer->StopObserver();
-			pPlayer->m_bSentMsg = FALSE;
-			// notify other clients of player left spectators
-			UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "%s has left spectator mode\n",
-					( pev->netname && ( STRING( pev->netname ) )[0] != 0 ) ? STRING( pev->netname ) : "unconnected" ) );
+			if( !pPlayer->IsObserver() )
+			{
+				// always allow admins to become a spectator
+				if( ( allow_spectators.value || pPlayer->m_gm.IsAdmin() ) && (gpGlobals->time >= pPlayer->m_flLastCommandTime[0]))
+				{
+					edict_t *pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot( pPlayer );
+					pPlayer->StartObserver( pev->origin, VARS( pentSpawnSpot )->angles );
+					pPlayer->m_bSentMsg = FALSE;
+					// notify other clients of player switching to spectator mode
+					UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "%s switched to spectator mode\n",
+							( pev->netname && ( STRING( pev->netname ) )[0] != 0 ) ? STRING( pev->netname ) : "unconnected" ) );
+					pPlayer->m_flLastCommandTime[0] = gpGlobals->time + 10.0f;
+				}
+				else
+					ClientPrint( pev, HUD_PRINTCONSOLE, "Spectator mode is disabled. (Or you are spamming it)\n" );
+			}
+			else
+			{
+				pPlayer->StopObserver();
+				pPlayer->m_bSentMsg = FALSE;
+				// notify other clients of player left spectators
+				UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "%s has left spectator mode\n",
+						( pev->netname && ( STRING( pev->netname ) )[0] != 0 ) ? STRING( pev->netname ) : "unconnected" ) );
+			}
 		}
 	}
 	else if( FStrEq( pcmd, "closemenus" ) )
