@@ -421,7 +421,6 @@ void CAR2::Precache(void)
 
 	PRECACHE_SOUND("weapons/357_cock1.wav");
 	PRECACHE_GENERIC("sprites/weapon_ar2.txt");
-
 }
 
 int CAR2::GetItemInfo(ItemInfo *p)
@@ -687,8 +686,6 @@ class CAR2AmmoGrenade : public CBasePlayerAmmo
 		Precache( );
 		SET_MODEL(ENT(pev), "models/combine_rifle_ammo01.mdl");
 		CBasePlayerAmmo::Spawn( );
-
-
 	}
 	void Precache( void )
 	{

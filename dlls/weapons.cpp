@@ -356,23 +356,25 @@ void W_Precache( void )
 
 	// hornetgun
 	UTIL_PrecacheOtherWeapon( "weapon_hornetgun" );
-	// sniper
-	UTIL_PrecacheOtherWeapon( "weapon_sniperrifle" );
-        UTIL_PrecacheOther( "ammo_762" );
 
 	if ( mp_gunmod.value )
 	{
 		UTIL_PrecacheOtherWeapon( "weapon_gravgun" );
 		UTIL_PrecacheOtherWeapon( "weapon_ar2" );
+		UTIL_PrecacheOther( "ammo_ar2_altfire" );
 		UTIL_PrecacheOtherWeapon( "weapon_big_cock" );
 		UTIL_PrecacheOtherWeapon( "weapon_gateofbabylon" );
 		UTIL_PrecacheOtherWeapon( "weapon_m249" );
+		UTIL_PrecacheOther( "ammo_556" );
 		UTIL_PrecacheOtherWeapon( "weapon_shockrifle" );
 		UTIL_PrecacheOtherWeapon( "weapon_displacer" );
 		UTIL_PrecacheOtherWeapon( "weapon_grapple" );
 		UTIL_PrecacheOtherWeapon( "weapon_sporelauncher" );
+		UTIL_PrecacheOther( "ammo_spore_item" );
 		UTIL_PrecacheOtherWeapon( "weapon_portalgun" );
 		UTIL_PrecacheOtherWeapon( "weapon_knife" );
+		UTIL_PrecacheOtherWeapon( "weapon_sniperrifle" );
+        	UTIL_PrecacheOther( "ammo_762" );
 	}
 
 

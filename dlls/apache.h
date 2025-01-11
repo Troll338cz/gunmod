@@ -15,8 +15,6 @@
 
 #ifndef APACHE_H
 #define APACHE_H
-
-
 class CApache : public CBaseMonster
 {
 public:
@@ -33,8 +31,8 @@ public:
 
 	void SetObjectCollisionBox( void )
 	{
-		pev->absmin = pev->origin + Vector( -300, -300, -172 );
-		pev->absmax = pev->origin + Vector( 300, 300, 8 );
+		pev->absmin = pev->origin + Vector( -300.0f, -300.0f, -172.0f );
+		pev->absmax = pev->origin + Vector( 300.0f, 300.0f, 8.0f );
 	}
 
 	void EXPORT HuntThink( void );

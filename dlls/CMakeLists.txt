@@ -147,6 +147,7 @@ set (SVDLL_SOURCES
 	gravgunmod.cpp
 	shock.cpp
 	shockrifle.cpp
+	vehicle.cpp
 	displacer.cpp
 	m249.cpp
 	admin.cpp

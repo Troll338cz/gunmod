@@ -26,11 +26,11 @@
 #include "cbase.h"
 
 // Holds engine functionality callbacks
-enginefuncs_t g_engfuncs;
-globalvars_t *gpGlobals;
+enginefuncs_t	 g_engfuncs;
+globalvars_t	*gpGlobals;
 server_physics_api_t g_physfuncs;
 
-#ifdef _WIN32
+#if XASH_WIN32
 
 // Required DLL entry point
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
