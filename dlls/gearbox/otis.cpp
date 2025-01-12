@@ -53,24 +53,6 @@
 #define OTIS_BODY_GUNDRAWN		1
 #define OTIS_BODY_DONUT			2
 
-BOOL IsFacing( entvars_t *pevTest, const Vector &reference )
-{
-	Vector vecDir = reference - pevTest->origin;
-	vecDir.z = 0.0f;
-	vecDir = vecDir.Normalize();
-	Vector forward, angle;
-	angle = pevTest->v_angle;
-	angle.x = 0.0f;
-	UTIL_MakeVectorsPrivate( angle, forward, NULL, NULL );
-
-	// He's facing me, he meant it
-	if( DotProduct( forward, vecDir ) > 0.96f )	// +/- 15 degrees or so
-	{
-		return TRUE;
-	}
-	return FALSE;
-}
-
 class COtis : public CBarney
 {
 public:

@@ -373,6 +373,21 @@ void CMassn::DeathSound(void)
 {
 }
 
+//=========================================================
+// CAssassinRepel - when triggered, spawns a monster_male_assassin
+// repelling down a line.
+//=========================================================
+
+class CAssassinRepel : public CHGruntRepel
+{
+public:
+	const char* TrooperName() {
+		return "monster_male_assassin";
+	}
+};
+
+LINK_ENTITY_TO_CLASS(monster_assassin_repel, CAssassinRepel)
+
 class CDeadMassn : public CBaseMonster
 {
 public:

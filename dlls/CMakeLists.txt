@@ -171,6 +171,7 @@ set (SVDLL_SOURCES
 	gearbox/blkop_osprey.cpp
 	gearbox/cleansuit_scientist.cpp
 	gearbox/drillsergeant.cpp
+	gearbox/fgrunt.cpp
 	gearbox/gearbox_effects.cpp
 	gearbox/gearbox_triggers.cpp
 	gearbox/gearbox_utils.cpp

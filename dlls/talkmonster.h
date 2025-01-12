@@ -19,6 +19,9 @@
 #ifndef MONSTERS_H
 #include "monsters.h"
 #endif
+#ifndef SQUADMONSTER_H
+#include "squadmonster.h"
+#endif
 
 //=========================================================
 // Talking monster base class
@@ -95,7 +98,7 @@ enum
 	LAST_TALKMONSTER_TASK			// MUST be last
 };
 
-class CTalkMonster : public CBaseMonster
+class CTalkMonster : public CSquadMonster //CBaseMonster
 {
 public:
 	void			TalkInit( void );				
@@ -172,6 +175,8 @@ public:
 	EHANDLE		m_hTalkTarget;	// who to look at while talking
 	CUSTOM_SCHEDULES
 };
+
+BOOL IsFacing( entvars_t *pevTest, const Vector &reference );
 
 // Clients can push talkmonsters out of their way
 #define		bits_COND_CLIENT_PUSH		( bits_COND_SPECIAL1 )
