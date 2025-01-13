@@ -24,8 +24,7 @@
 #include "customentity.h"
 #include "osprey.h"
 
-//#define SF_WAITFORTRIGGER	0x40
-//#define MAX_CARRY	OSPREY_MAX_CARRY
+#define SF_WAITFORTRIGGER	0x40
 
 class CBlkopOsprey : public COsprey
 {

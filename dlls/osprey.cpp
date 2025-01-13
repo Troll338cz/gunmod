@@ -24,7 +24,6 @@
 #include "customentity.h"
 #include "osprey.h"
 
-
 LINK_ENTITY_TO_CLASS( monster_osprey, COsprey )
 
 TYPEDESCRIPTION	COsprey::m_SaveData[] =

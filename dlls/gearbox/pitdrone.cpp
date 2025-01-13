@@ -765,8 +765,8 @@ void CPitdrone::GibMonster()
 
 	if( CVAR_GET_FLOAT( "violence_agibs" ) != 0 )	// Should never get here, but someone might call it directly
 	{
-//		CGib::SpawnRandomGibs( pev, 5, "models/pit_drone_gibs.mdl", PITDRONE_GIB_COUNT );	// Throw alien gibs
-		CGib::SpawnRandomGibs( pev, 5, FALSE );	// Throw alien gibs
+		//CGib::SpawnRandomGibs( pev, 5, "models/pit_drone_gibs.mdl", PITDRONE_GIB_COUNT );	// Throw alien gibs
+		CGib::SpawnRandomGibs( pev, 6, FALSE );
 	}
 	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time;

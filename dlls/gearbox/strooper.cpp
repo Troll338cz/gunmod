@@ -285,8 +285,7 @@ BOOL CStrooper::CheckRangeAttack2( float flDot, float flDist )
 	{
 		return FALSE;
 	}
-//	return CheckRangeAttack2Impl(gSkillData.strooperGrenadeSpeed, flDot, flDist);
-	return CheckRangeAttack2( flDot, flDist);
+	return CheckRangeAttack2Impl(gSkillData.strooperGrenadeSpeed, flDot, flDist);
 }
 
 //=========================================================
@@ -315,8 +314,7 @@ void CStrooper::HandleAnimEvent(MonsterEvent_t *pEvent)
 	{
 		UTIL_MakeVectors(pev->angles);
 		// CGrenade::ShootTimed( pev, pev->origin + gpGlobals->v_forward * 34 + Vector (0, 0, 32), m_vecTossVelocity, 3.5 );
-		//CSpore::CreateSpore(pev->origin + Vector(0, 0, 98), m_vecTossVelocity, this, CSpore::GRENADE, true, false);
-		CSpore::CreateSporeGrenade( pev->origin + Vector(0, 0, 98), m_vecTossVelocity, this, FALSE );
+		CSpore::CreateSporeGrenade(pev->origin + Vector(0, 0, 98), m_vecTossVelocity, this, FALSE );
 
 		m_fThrowGrenade = FALSE;
 		m_flNextGrenadeCheck = gpGlobals->time + 6;// wait six seconds before even looking again to see if a grenade can be thrown.

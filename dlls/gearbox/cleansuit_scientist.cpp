@@ -23,7 +23,6 @@
 #include	"scripted.h"
 #include	"animation.h"
 #include	"soundent.h"
-#include	"game.h"
 #include	"scientist.h"
 
 //=========================================================
@@ -35,7 +34,6 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	virtual BOOL	CanHeal(void);
-
 };
 
 LINK_ENTITY_TO_CLASS(monster_cleansuit_scientist, CCleansuitScientist);
@@ -157,6 +155,7 @@ void CDeadCleansuitScientist::Spawn(void)
 class CSittingCleansuitScientist : public CSittingScientist
 {
 public:
+
 	void Spawn( void );
 };
 

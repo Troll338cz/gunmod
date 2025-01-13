@@ -26,8 +26,7 @@
 #include	"weapons.h"
 #include	"headcrab.h"
 #include	"shockroach.h"
-#include	"customweapons.h"
-#include 	"unpredictedweapon.h"
+#include 	"customweapons.h"
 
 LINK_ENTITY_TO_CLASS(monster_shockroach, CShockRoach)
 
